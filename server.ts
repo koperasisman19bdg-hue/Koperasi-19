@@ -341,26 +341,12 @@ app.post('/api/login', (req: Request, res: Response) => {
 // API: Sync specific entity key with Instant Real-Time Delta Broadcast
 app.post('/api/sync', (req: Request, res: Response) => {
   try {
-    const { key, data, force, clientId, entityName } = req.body;
+    const { key, data, clientId, entityName } = req.body;
     if (!key) {
       return res.status(400).json({ success: false, error: 'Key is required' });
     }
 
     const currentDb = readDatabase();
-    const existingVal = (currentDb as any)[key];
-
-    // Anti-wipe lock: If existing array has items and incoming is empty array, protect against accidental loss
-    if (Array.isArray(existingVal) && existingVal.length > 0 && Array.isArray(data) && data.length === 0 && !force) {
-      return res.json({
-        success: true,
-        key,
-        locked: true,
-        message: 'Protected against empty wipe',
-        count: existingVal.length,
-        lastUpdated: currentDb.lastUpdated
-      });
-    }
-
     (currentDb as any)[key] = data;
     const saved = writeDatabase(currentDb);
 

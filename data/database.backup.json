@@ -1,0 +1,984 @@
+{
+  "anggota": [],
+  "jurnal": [],
+  "simpanan": [],
+  "pinjamanUang": [],
+  "pinjamanBarang": [],
+  "pengajuan": [],
+  "toko": [],
+  "seragam": [],
+  "uploadedPosisiKeuangan": {
+    "id": "posisi_keuangan_lpj_2025",
+    "tahunBerjalan": "2025",
+    "tahunLalu": "2024",
+    "terakhirDiperbarui": "2026-09-28",
+    "asetLancar": [
+      {
+        "no": 1,
+        "namaAkun": "Kas",
+        "nilaiBerjalan": 5747047,
+        "nilaiLalu": 13760000
+      },
+      {
+        "no": 2,
+        "namaAkun": "Bank",
+        "nilaiBerjalan": 371038686,
+        "nilaiLalu": 525255417
+      },
+      {
+        "no": 3,
+        "namaAkun": "Piutang Uang Anggota",
+        "nilaiBerjalan": 566226683,
+        "nilaiLalu": 406112771
+      },
+      {
+        "no": 4,
+        "namaAkun": "Piutang Uang Tak Tertagih",
+        "nilaiBerjalan": 12879711,
+        "nilaiLalu": 12879711
+      },
+      {
+        "no": 5,
+        "namaAkun": "Penyusutan Piutang Uang tak tertagih",
+        "nilaiBerjalan": -11257902,
+        "nilaiLalu": -10507902
+      },
+      {
+        "no": 6,
+        "namaAkun": "Piutang Barang",
+        "nilaiBerjalan": 12141200,
+        "nilaiLalu": 27538000
+      },
+      {
+        "no": 7,
+        "namaAkun": "Kas Pertokoan",
+        "nilaiBerjalan": 2839660,
+        "nilaiLalu": 7324000
+      },
+      {
+        "no": 8,
+        "namaAkun": "Persediaan Barang Pertokoan",
+        "nilaiBerjalan": 8565023,
+        "nilaiLalu": 3292950
+      },
+      {
+        "no": 9,
+        "namaAkun": "Persediaan Kaos OR, Batik, raket dll",
+        "nilaiBerjalan": 0,
+        "nilaiLalu": 7440000
+      },
+      {
+        "no": 10,
+        "namaAkun": "Penyusutan PSAS",
+        "nilaiBerjalan": 0,
+        "nilaiLalu": -7440000
+      },
+      {
+        "no": 11,
+        "namaAkun": "Persediaan PSAS dan atribut",
+        "nilaiBerjalan": 60979000,
+        "nilaiLalu": 72466500
+      }
+    ],
+    "penyertaan": [
+      {
+        "no": 1,
+        "namaAkun": "Simpanan Pokok PKPRI",
+        "nilaiBerjalan": 2000000,
+        "nilaiLalu": 2000000
+      },
+      {
+        "no": 2,
+        "namaAkun": "Simpanan Wajib PKPRI",
+        "nilaiBerjalan": 36888400,
+        "nilaiLalu": 36888400
+      },
+      {
+        "no": 3,
+        "namaAkun": "Simpanan Wajib Khusus PKPRI",
+        "nilaiBerjalan": 1416000,
+        "nilaiLalu": 1416000
+      },
+      {
+        "no": 4,
+        "namaAkun": "Simpanan Sukarela PKPRI",
+        "nilaiBerjalan": 369600,
+        "nilaiLalu": 369600
+      },
+      {
+        "no": 5,
+        "namaAkun": "Simpanan Lain - Lain PKPRI",
+        "nilaiBerjalan": 127825,
+        "nilaiLalu": 127825
+      },
+      {
+        "no": 6,
+        "namaAkun": "Simpan UKS PKPRI",
+        "nilaiBerjalan": 275875,
+        "nilaiLalu": 275875
+      }
+    ],
+    "asetTetap": [
+      {
+        "no": 1,
+        "namaAkun": "Peralatan",
+        "nilaiBerjalan": 28488000,
+        "nilaiLalu": 28488000
+      },
+      {
+        "no": 2,
+        "namaAkun": "Akumulasi Penyusutan Peralatan",
+        "nilaiBerjalan": -17540099,
+        "nilaiLalu": -16840099
+      },
+      {
+        "no": 3,
+        "namaAkun": "Gedung Kantin dan Rehabilitasi",
+        "nilaiBerjalan": 176120000,
+        "nilaiLalu": 176120000
+      },
+      {
+        "no": 4,
+        "namaAkun": "Akumulasi Penyusutan dan rehabilitasi",
+        "nilaiBerjalan": -74122780,
+        "nilaiLalu": -68122780
+      }
+    ],
+    "liabilitas": [
+      {
+        "no": 1,
+        "namaAkun": "Simpanan Sukarela Anggota",
+        "nilaiBerjalan": 258474290,
+        "nilaiLalu": 257696547
+      },
+      {
+        "no": 2,
+        "namaAkun": "Dana Sosial",
+        "nilaiBerjalan": 15332613,
+        "nilaiLalu": 13269555
+      },
+      {
+        "no": 3,
+        "namaAkun": "Dana Pendidikan",
+        "nilaiBerjalan": 6509953,
+        "nilaiLalu": 9572054
+      },
+      {
+        "no": 4,
+        "namaAkun": "Dana Pensiun dan Kematian (DPDK)",
+        "nilaiBerjalan": 599916,
+        "nilaiLalu": 1023916
+      },
+      {
+        "no": 5,
+        "namaAkun": "Dana Pembangunan Daerah Kerja",
+        "nilaiBerjalan": 3218381,
+        "nilaiLalu": 9780482
+      },
+      {
+        "no": 6,
+        "namaAkun": "Dana 12 Juli",
+        "nilaiBerjalan": 8858000,
+        "nilaiLalu": 5558000
+      }
+    ],
+    "ekuitas": [
+      {
+        "no": 1,
+        "namaAkun": "Simpanan Pokok Anggota",
+        "nilaiBerjalan": 33000000,
+        "nilaiLalu": 31000000
+      },
+      {
+        "no": 2,
+        "namaAkun": "Simpanan Wajib Anggota",
+        "nilaiBerjalan": 681979430,
+        "nilaiLalu": 713005250
+      },
+      {
+        "no": 3,
+        "namaAkun": "Dana Cadangan",
+        "nilaiBerjalan": 108993547,
+        "nilaiLalu": 104180489
+      },
+      {
+        "no": 4,
+        "namaAkun": "Hibah",
+        "nilaiBerjalan": 5000000,
+        "nilaiLalu": 5000000
+      }
+    ],
+    "shuTahunBerjalan": {
+      "nilaiBerjalan": 61215799,
+      "nilaiLalu": 68757975
+    }
+  },
+  "uploadedPHU": {
+    "id": "phu_lpj_2025",
+    "tahunBerjalan": "2025",
+    "tahunLalu": "2024",
+    "terakhirDiperbarui": "2026-09-28",
+    "pendapatan": [
+      {
+        "no": 1,
+        "namaAkun": "Pendapatan USP",
+        "nilaiBerjalan": 59823151,
+        "nilaiLalu": 64651745
+      },
+      {
+        "no": 2,
+        "namaAkun": "Administrasi USP",
+        "nilaiBerjalan": 6444370,
+        "nilaiLalu": 5320209
+      },
+      {
+        "no": 3,
+        "namaAkun": "Pendapatan Usaha lainnya",
+        "nilaiBerjalan": 10000000,
+        "nilaiLalu": 18000000
+      },
+      {
+        "no": 4,
+        "namaAkun": "Pendapatan Barang",
+        "nilaiBerjalan": 7667850,
+        "nilaiLalu": 7436000
+      },
+      {
+        "no": 5,
+        "namaAkun": "Pendapatan laba PSAS",
+        "nilaiBerjalan": 20000000,
+        "nilaiLalu": 43000000
+      },
+      {
+        "no": 6,
+        "namaAkun": "Pendapatan Sewa Kantin",
+        "nilaiBerjalan": 37000000,
+        "nilaiLalu": 51000000
+      },
+      {
+        "no": 7,
+        "namaAkun": "Pendapatan Pertokoan",
+        "nilaiBerjalan": 28000000,
+        "nilaiLalu": 28421500
+      },
+      {
+        "no": 8,
+        "namaAkun": "Pendapatan Bunga Bank",
+        "nilaiBerjalan": 595516,
+        "nilaiLalu": 697425
+      },
+      {
+        "no": 9,
+        "namaAkun": "SHU PKPRI",
+        "nilaiBerjalan": 0,
+        "nilaiLalu": 0
+      }
+    ],
+    "beban": [
+      {
+        "no": 1,
+        "namaAkun": "Transportasi",
+        "nilaiBerjalan": 1000000,
+        "nilaiLalu": 1750000
+      },
+      {
+        "no": 2,
+        "namaAkun": "ATK",
+        "nilaiBerjalan": 750000,
+        "nilaiLalu": 1850000
+      },
+      {
+        "no": 3,
+        "namaAkun": "Pembelian meja kursi kantin",
+        "nilaiBerjalan": 2905061,
+        "nilaiLalu": 1250000
+      },
+      {
+        "no": 4,
+        "namaAkun": "Biaya perbaikan dan pemeliharaan kantin",
+        "nilaiBerjalan": 7000000,
+        "nilaiLalu": 3300000
+      },
+      {
+        "no": 5,
+        "namaAkun": "Gaji Karyawan",
+        "nilaiBerjalan": 10000000,
+        "nilaiLalu": 9000000
+      },
+      {
+        "no": 6,
+        "namaAkun": "Perjalanan Dinas Pengurus",
+        "nilaiBerjalan": 300000,
+        "nilaiLalu": 1200000
+      },
+      {
+        "no": 7,
+        "namaAkun": "THR Pengurus dan anggota koperasi",
+        "nilaiBerjalan": 21650000,
+        "nilaiLalu": 20750000
+      },
+      {
+        "no": 8,
+        "namaAkun": "Penyusutan Pertokoan",
+        "nilaiBerjalan": 750000,
+        "nilaiLalu": 750000
+      },
+      {
+        "no": 9,
+        "namaAkun": "Penyusutan Piutang Tak Tertagih",
+        "nilaiBerjalan": 750000,
+        "nilaiLalu": 750000
+      },
+      {
+        "no": 10,
+        "namaAkun": "Pajak",
+        "nilaiBerjalan": 600000,
+        "nilaiLalu": 900000
+      },
+      {
+        "no": 11,
+        "namaAkun": "Biaya-biaya Bank",
+        "nilaiBerjalan": 441025,
+        "nilaiLalu": 476904
+      },
+      {
+        "no": 12,
+        "namaAkun": "Biaya Penyusutan Pembangunan kantin",
+        "nilaiBerjalan": 6000000,
+        "nilaiLalu": 6000000
+      },
+      {
+        "no": 13,
+        "namaAkun": "Biaya Penyusutan Peralatan",
+        "nilaiBerjalan": 700000,
+        "nilaiLalu": 700000
+      },
+      {
+        "no": 14,
+        "namaAkun": "Insentif Pengurus",
+        "nilaiBerjalan": 1500000,
+        "nilaiLalu": 1500000
+      },
+      {
+        "no": 15,
+        "namaAkun": "Insentif Pembina Intern",
+        "nilaiBerjalan": 1000000,
+        "nilaiLalu": 1000000
+      },
+      {
+        "no": 16,
+        "namaAkun": "Insentif Pembina ekstern",
+        "nilaiBerjalan": 1500000,
+        "nilaiLalu": 1000000
+      },
+      {
+        "no": 17,
+        "namaAkun": "Insentif Pengawas (3 orang)",
+        "nilaiBerjalan": 3000000,
+        "nilaiLalu": 2250000
+      },
+      {
+        "no": 18,
+        "namaAkun": "Biaya Rapat Anggota (RAT)",
+        "nilaiBerjalan": 15000000,
+        "nilaiLalu": 12500000
+      },
+      {
+        "no": 19,
+        "namaAkun": "Biaya Persiapan RAT",
+        "nilaiBerjalan": 3600000,
+        "nilaiLalu": 3500000
+      },
+      {
+        "no": 20,
+        "namaAkun": "Pemilihan pengurus dan pengawas baru",
+        "nilaiBerjalan": 750000,
+        "nilaiLalu": 0
+      },
+      {
+        "no": "20b",
+        "namaAkun": "Rapat MOU",
+        "nilaiBerjalan": 0,
+        "nilaiLalu": 0
+      },
+      {
+        "no": 21,
+        "namaAkun": "Partisipasi Kegiatan Sekolah",
+        "nilaiBerjalan": 2010000,
+        "nilaiLalu": 0
+      },
+      {
+        "no": 22,
+        "namaAkun": "Insentif Pengurus (3 orang) @100.000/bln",
+        "nilaiBerjalan": 3600000,
+        "nilaiLalu": 3600000
+      },
+      {
+        "no": 23,
+        "namaAkun": "Kontribusi Seragam, kantin dan toko ke Sekolah",
+        "nilaiBerjalan": 7859002,
+        "nilaiLalu": 10792000
+      },
+      {
+        "no": 24,
+        "namaAkun": "Kekurangan Amnesti Pajak",
+        "nilaiBerjalan": 0,
+        "nilaiLalu": 0
+      },
+      {
+        "no": 25,
+        "namaAkun": "Kekurangan pembayaran pajak",
+        "nilaiBerjalan": 0,
+        "nilaiLalu": 0
+      },
+      {
+        "no": 26,
+        "namaAkun": "Tabungan RAT tahun usaha 2025",
+        "nilaiBerjalan": 12000000,
+        "nilaiLalu": 0
+      },
+      {
+        "no": 27,
+        "namaAkun": "Biaya RAT di luar",
+        "nilaiBerjalan": 0,
+        "nilaiLalu": 50000000
+      },
+      {
+        "no": 28,
+        "namaAkun": "Pembayaran Listrik, sampah dan air",
+        "nilaiBerjalan": 1600000,
+        "nilaiLalu": 1500000
+      },
+      {
+        "no": 29,
+        "namaAkun": "Pengelolaan kantin",
+        "nilaiBerjalan": 700000,
+        "nilaiLalu": 700000
+      },
+      {
+        "no": 30,
+        "namaAkun": "Biaya pasang KWH dan instalasi",
+        "nilaiBerjalan": 0,
+        "nilaiLalu": 2750000
+      },
+      {
+        "no": 31,
+        "namaAkun": "Seragam batik anggota",
+        "nilaiBerjalan": 1350000,
+        "nilaiLalu": 10000000
+      }
+    ],
+    "distribusiSHU": [
+      {
+        "namaPos": "Cadangan Dana",
+        "persentase": 5,
+        "nilaiBerjalan": 3060790,
+        "nilaiLalu": 4813058
+      },
+      {
+        "namaPos": "Jasa Penyimpan",
+        "persentase": 30,
+        "nilaiBerjalan": 18364740,
+        "nilaiLalu": 22002552
+      },
+      {
+        "namaPos": "Jasa Peminjam Uang",
+        "persentase": 34,
+        "nilaiBerjalan": 20813372,
+        "nilaiLalu": 22002552
+      },
+      {
+        "namaPos": "Jasa Peminjam Barang",
+        "persentase": 6,
+        "nilaiBerjalan": 3672948,
+        "nilaiLalu": 1375160
+      },
+      {
+        "namaPos": "Pengurus Pegawai",
+        "persentase": 10,
+        "nilaiBerjalan": 6121580,
+        "nilaiLalu": 6875798
+      },
+      {
+        "namaPos": "Dana Sosial",
+        "persentase": 5,
+        "nilaiBerjalan": 3060790,
+        "nilaiLalu": 4813058
+      },
+      {
+        "namaPos": "Dana Pendidikan",
+        "persentase": 5,
+        "nilaiBerjalan": 3060790,
+        "nilaiLalu": 3437899
+      },
+      {
+        "namaPos": "Dana Pembangunan Daerah Kerja",
+        "persentase": 5,
+        "nilaiBerjalan": 3060790,
+        "nilaiLalu": 3437899
+      }
+    ]
+  },
+  "aiReports": [
+    {
+      "id": "rep_1790607659714_0mo5jy",
+      "tanggalDibuat": "2026-09-28T15:00:59.714Z",
+      "periode": "Tahun Buku 2025",
+      "sumberData": "LPJ Koperasi Konsumen Warga Bahagia 2025 & Pembukuan Standar SAK EP Permanen",
+      "namaFileSumber": "LPJ_KOPERASI_WARGA_BAHAGIA_2025.pdf",
+      "ringkasanEksekutif": "Laporan Keuangan SAK EP Koperasi Konsumen \"Warga Bahagia\" periode Tahun Buku 2025 disusun berdasarkan pola dan konsep baku permanen standar SAK EP yang berlaku untuk tahun buku berapapun. Total Aset tercatat sebesar Rp 1.183.181.929 seimbang dengan Total Liabilitas dan Ekuitas sebesar Rp 1.183.181.929. Kas dan Bank tercatat Rp 376.785.733, Piutang Anggota Rp 578.367.883, Persediaan Rp 69.544.023, Modal Sendiri Ekuitas Rp 890.188.776, dan Sisa Hasil Usaha (SHU) Bersih sebesar Rp 61.215.799.",
+      "posisiKeuangan": {
+        "periode": "Tahun Buku 2025",
+        "tahunBerjalan": "2025",
+        "tahunSebelumnya": "2024",
+        "asetLancar": {
+          "kas": 5747047,
+          "kasLalu": 4820000,
+          "bank": 371038686,
+          "bankLalu": 319680000,
+          "totalKasDanBank": 376785733,
+          "totalKasDanBankLalu": 324500000,
+          "piutangUangAnggota": 566226683,
+          "piutangUangAnggotaLalu": 495340000,
+          "piutangBarang": 12141200,
+          "piutangBarangLalu": 14850000,
+          "persediaanPertokoan": 8565023,
+          "persediaanPertokoanLalu": 9200000,
+          "persediaanPsasAtribut": 60979000,
+          "persediaanPsasAtributLalu": 55400000,
+          "totalPersediaan": 69544023,
+          "totalPersediaanLalu": 64600000,
+          "totalAsetLancar": 1024697639,
+          "totalAsetLancarLalu": 899290000
+        },
+        "asetTidakLancar": {
+          "asetTetapInventaris": 188484290,
+          "asetTetapInventarisLalu": 173484290,
+          "akumulasiPenyusutan": 30000000,
+          "akumulasiPenyusutanLalu": 24000000,
+          "nilaiBukuAsetTetap": 158484290,
+          "nilaiBukuAsetTetapLalu": 149484290,
+          "totalAsetTidakLancar": 158484290,
+          "totalAsetTidakLancarLalu": 149484290
+        },
+        "totalAset": 1183181929,
+        "totalAsetLalu": 1048774290,
+        "liabilitasJangkaPendek": {
+          "simpananSukarela": 218450000,
+          "simpananSukarelaLalu": 169287025,
+          "hutangUsahaPengadaan": 45243153,
+          "hutangUsahaPengadaanLalu": 42119690,
+          "bebanAkrualHonor": 29300000,
+          "bebanAkrualHonorLalu": 24500000,
+          "totalLiabilitas": 292993153,
+          "totalLiabilitasLalu": 235906715
+        },
+        "ekuitas": {
+          "simpananPokok": 33000000,
+          "simpananPokokLalu": 30000000,
+          "simpananWajib": 681979430,
+          "simpananWajibLalu": 615420000,
+          "danaCadangan": 108993547,
+          "danaCadanganLalu": 93689600,
+          "hibahDonasi": 5000000,
+          "hibahDonasiLalu": 5000000,
+          "subtotalEkuitasSebelumShu": 828972977,
+          "subtotalEkuitasSebelumShuLalu": 744109600,
+          "shuTahunBerjalan": 61215799,
+          "shuTahunBerjalanLalu": 68757975,
+          "totalEkuitas": 890188776,
+          "totalEkuitasLalu": 812867575
+        },
+        "totalLiabilitasDanEkuitas": 1183181929,
+        "totalLiabilitasDanEkuitasLalu": 1048774290
+      },
+      "perhitunganHasilUsaha": {
+        "periode": "Tahun Buku 2025",
+        "tahunBerjalan": "2025",
+        "tahunSebelumnya": "2024",
+        "pendapatan": {
+          "jasaPinjamanUang": 102450600,
+          "jasaPinjamanUangLalu": 91200000,
+          "jasaPinjamanBarang": 8760000,
+          "jasaPinjamanBarangLalu": 9450000,
+          "penjualanToko": 28540287,
+          "penjualanTokoLalu": 26120000,
+          "penjualanPsasSeragam": 25430000,
+          "penjualanPsasSeragamLalu": 22800000,
+          "pendapatanLain": 4350000,
+          "pendapatanLainLalu": 3850000,
+          "totalPendapatan": 169530887,
+          "totalPendapatanLalu": 153420000
+        },
+        "beban": {
+          "pokokTokoSeragam": 38640000,
+          "pokokTokoSeragamLalu": 31120000,
+          "operasionalDanHonor": 42150088,
+          "operasionalDanHonorLalu": 30542025,
+          "organisasiDanRat": 21525000,
+          "organisasiDanRatLalu": 17000000,
+          "penyusutanInventaris": 6000000,
+          "penyusutanInventarisLalu": 6000000,
+          "totalBeban": 108315088,
+          "totalBebanLalu": 84662025
+        },
+        "sisaHasilUsaha": 61215799,
+        "sisaHasilUsahaLalu": 68757975
+      },
+      "arusKas": {
+        "periode": "Tahun Buku 2025",
+        "tahunBerjalan": "2025",
+        "tahunSebelumnya": "2024",
+        "aktivitasOperasi": [
+          {
+            "keterangan": "Penerimaan Simpanan Wajib & Sukarela Anggota",
+            "jumlah": 102296915,
+            "jumlahLalu": 92313000
+          },
+          {
+            "keterangan": "Penerimaan Angsuran Pokok dan Pendapatan Jasa Pinjaman",
+            "jumlah": 141381828,
+            "jumlahLalu": 125856000
+          },
+          {
+            "keterangan": "Penerimaan Hasil Penjualan Unit Pertokoan & Seragam/PSAS",
+            "jumlah": 53970287,
+            "jumlahLalu": 48920000
+          },
+          {
+            "keterangan": "Pembayaran Beban Pokok Pembelian Toko & Seragam",
+            "jumlah": -38640000,
+            "jumlahLalu": -31120000
+          },
+          {
+            "keterangan": "Pembayaran Beban Operasional, Honor Pengelola & Administrasi",
+            "jumlah": -42150088,
+            "jumlahLalu": -30542025
+          },
+          {
+            "keterangan": "Pembayaran Beban RAT, Organisasi, dan Pengawas",
+            "jumlah": -21525000,
+            "jumlahLalu": -17000000
+          }
+        ],
+        "totalKasOperasi": 193441925,
+        "totalKasOperasiLalu": 217275201,
+        "aktivitasInvestasi": [
+          {
+            "keterangan": "Perolehan / Pembelian Peralatan Toko & Inventaris Kantor",
+            "jumlah": -15000000,
+            "jumlahLalu": -12000000
+          }
+        ],
+        "totalKasInvestasi": -15000000,
+        "totalKasInvestasiLalu": -12000000,
+        "aktivitasPendanaan": [
+          {
+            "keterangan": "Penerimaan Simpanan Pokok Anggota Baru",
+            "jumlah": 3000000,
+            "jumlahLalu": 2500000
+          },
+          {
+            "keterangan": "Penyaluran Pinjaman Baru kepada Anggota (Neto)",
+            "jumlah": -70778335,
+            "jumlahLalu": -61917500
+          },
+          {
+            "keterangan": "Pembagian SHU Periode Lalu kepada Anggota (RAT)",
+            "jumlah": -27503190,
+            "jumlahLalu": -24065291
+          },
+          {
+            "keterangan": "Penarikan Bersih Simpanan Sukarela Anggota",
+            "jumlah": -37136500,
+            "jumlahLalu": -28778794
+          }
+        ],
+        "totalKasPendanaan": -126156192,
+        "totalKasPendanaanLalu": -113745000,
+        "kenaikanBersihKas": 52285733,
+        "kenaikanBersihKasLalu": 48675000,
+        "saldoKasAwal": 324500000,
+        "saldoKasAwalLalu": 275825000,
+        "saldoKasAkhir": 376785733,
+        "saldoKasAkhirLalu": 324500000
+      },
+      "perubahanEkuitas": {
+        "periode": "Tahun Buku 2025",
+        "tahunBerjalan": "2025",
+        "tahunSebelumnya": "2024",
+        "simpananPokokAwal": 30000000,
+        "simpananPokokAwalLalu": 27600000,
+        "penambahanPokok": 3000000,
+        "penambahanPokokLalu": 2500000,
+        "simpananPokokAkhir": 33000000,
+        "simpananPokokAkhirLalu": 30000000,
+        "simpananWajibAwal": 615420000,
+        "simpananWajibAwalLalu": 553878000,
+        "penambahanWajib": 66559430,
+        "penambahanWajibLalu": 62820000,
+        "simpananWajibAkhir": 681979430,
+        "simpananWajibAkhirLalu": 615420000,
+        "danaCadanganAwal": 93689600,
+        "danaCadanganAwalLalu": 80573056,
+        "penambahanCadangan": 15303947,
+        "penambahanCadanganLalu": 13211250,
+        "danaCadanganAkhir": 108993547,
+        "danaCadanganAkhirLalu": 93689600,
+        "modalPenyertaanDonasi": 5000000,
+        "modalPenyertaanDonasiLalu": 5000000,
+        "shuTahunBerjalan": 61215799,
+        "shuTahunBerjalanLalu": 68757975,
+        "pembagianShu": 0,
+        "pembagianShuLalu": 0,
+        "totalEkuitasAwal": 812867575,
+        "totalEkuitasAwalLalu": 715323466,
+        "totalEkuitasAkhir": 890188776,
+        "totalEkuitasAkhirLalu": 812867575
+      },
+      "calk": {
+        "periode": "Tahun Buku 2025",
+        "tahunBerjalan": "2025",
+        "tahunSebelumnya": "2024",
+        "gambaranUmum": "Koperasi Konsumen Pegawai \"Warga Bahagia\" SMAN 19 Bandung berkedudukan di Jl. Dago Asri No. 19 Bandung, berbadan hukum sah No. 19/BH/KWK/1998 tanggal 19 Mei 1998, mengelola Unit Simpan Pinjam, Unit Toko Sekolah, dan Unit Pengadaan Seragam/PSAS. Seluruh pelaporan keuangan periode Tahun Buku 2025 menggunakan Pola dan Konsep Baku SAK EP Permanen.",
+        "kebijakanAkuntansi": [
+          "Pernyataan Kepatuhan: Laporan keuangan disusun dan disajikan sesuai Standar Akuntansi Keuangan Entitas Privat (SAK EP) dan pola baku permanen koperasi.",
+          "Penyajian Komparatif: Seluruh komponen laporan keuangan disajikan secara komparatif antara Tahun Buku Berjalan (2025) dan Tahun Buku Sebelumnya (2024).",
+          "Kas dan Setara Kas (SAK EP Bab 7): Kas tunai bendahara Rp 5.747.047 dan saldo Bank Rp 371.038.686 sehingga total kas dan setara kas Rp 376.785.733.",
+          "Piutang Pinjaman Anggota (SAK EP Bab 11): Dinilai sebesar saldo bersih yang dapat ditagih melalui pemotongan gaji rutin (Piutang Uang Rp 566.226.683 dan Piutang Barang Rp 12.141.200).",
+          "Persediaan (SAK EP Bab 13): Dinilai berdasarkan metode FIFO, mencakup persediaan pertokoan Rp 8.565.023 dan persediaan PSAS/atribut seragam Rp 60.979.000 dengan total persediaan Rp 69.544.023.",
+          "Aset Tetap (SAK EP Bab 17): Dicatat atas dasar biaya perolehan Rp 188.484.290 dikurangi akumulasi penyusutan garis lurus Rp 30.000.000 (Nilai Buku Rp 158.484.290).",
+          "Liabilitas & Ekuitas (SAK EP Bab 22): Liabilitas jangka pendek Rp 292.993.153 dan Total Ekuitas Modal Sendiri Rp 890.188.776 (Modal sebelum SHU Rp 828.972.977 ditambah SHU Berjalan Rp 61.215.799)."
+        ],
+        "penjelasanPosKeuangan": [
+          {
+            "namaAkun": "Kas dan Setara Kas (Kas + Bank)",
+            "saldo": 376785733,
+            "saldoLalu": 324500000,
+            "penjelasan": "Terdiri dari kas fisik pada kasir bendahara Rp 5.747.047 dan rekening bank operasional Rp 371.038.686."
+          },
+          {
+            "namaAkun": "Piutang Uang Anggota",
+            "saldo": 566226683,
+            "saldoLalu": 495340000,
+            "penjelasan": "Pinjaman uang produktif/konsumtif anggota dengan kolektibilitas sangat lancar melalui payroll gaji."
+          },
+          {
+            "namaAkun": "Piutang Barang Anggota",
+            "saldo": 12141200,
+            "saldoLalu": 14850000,
+            "penjelasan": "Piutang pembelian barang cicilan toko dan perlengkapan seragam guru/karyawan."
+          },
+          {
+            "namaAkun": "Persediaan Barang (Toko & PSAS/Seragam)",
+            "saldo": 69544023,
+            "saldoLalu": 64600000,
+            "penjelasan": "Rincian: Persediaan pertokoan Rp 8.565.023 dan Persediaan PSAS/seragam/atribut sekolah Rp 60.979.000."
+          },
+          {
+            "namaAkun": "Aset Tetap & Inventaris (Nilai Buku)",
+            "saldo": 158484290,
+            "saldoLalu": 149484290,
+            "penjelasan": "Harga perolehan peralatan kantor dan toko Rp 188.484.290 dikurangi akumulasi penyusutan Rp 30.000.000."
+          },
+          {
+            "namaAkun": "Simpanan Pokok Anggota",
+            "saldo": 33000000,
+            "saldoLalu": 30000000,
+            "penjelasan": "Modal pokok awal anggota yang disetor penuh saat menjadi anggota koperasi."
+          },
+          {
+            "namaAkun": "Simpanan Wajib Anggota",
+            "saldo": 681979430,
+            "saldoLalu": 615420000,
+            "penjelasan": "Akumulasi simpanan wajib bulanan anggota yang dipotong rutin setiap bulan."
+          },
+          {
+            "namaAkun": "Dana Cadangan Koperasi",
+            "saldo": 108993547,
+            "saldoLalu": 93689600,
+            "penjelasan": "Akumulasi pemupukan cadangan dari penyisihan SHU tahun-tahun buku sebelumnya."
+          },
+          {
+            "namaAkun": "Hibah / Modal Penyertaan / Donasi",
+            "saldo": 5000000,
+            "saldoLalu": 5000000,
+            "penjelasan": "Modal hibah/donasi kelembagaan yang tidak dapat ditarik kembali."
+          },
+          {
+            "namaAkun": "Sisa Hasil Usaha (SHU) Tahun 2025",
+            "saldo": 61215799,
+            "saldoLalu": 68757975,
+            "penjelasan": "Sisa Hasil Usaha bersih setelah dikurangi seluruh beban usaha dan operasional, siap dibagikan pada RAT."
+          }
+        ],
+        "analisisKesehatan": {
+          "rasioLikuiditas": "Current Ratio: 349.7% (Aset Lancar Rp 1.024.697.639 / Liabilitas Rp 292.993.153 - Sangat Likuid)",
+          "rasioSolvabilitas": "Debt to Equity Ratio: 32.9% (Liabilitas Rp 292.993.153 / Ekuitas Rp 890.188.776 - Mandiri & Sangat Kuat)",
+          "rasioRentabilitas": "Return on Equity (ROE): 6.88% (SHU Rp 61.215.799 / Ekuitas Rp 890.188.776 - Hasil Usaha Sehat)",
+          "evaluasiKinerja": "Berdasarkan pola standar akuntansi SAK EP permanen, Koperasi Konsumen 'Warga Bahagia' berada dalam kategori SEHAT TINGGI dengan total aset Rp 1.183.181.929 dan tingkat kemandirian modal sendiri yang kokoh.",
+          "rekomendasiStrategis": [
+            "Mempertahankan akuntabilitas penuh antara laporan pertanggungjawaban (LPJ) dan laporan keuangan SAK EP formal untuk setiap tahun buku.",
+            "Memaksimalkan perputaran piutang uang anggota dengan tetap menjaga rasio NPL nol persen melalui pemotongan payroll rutin.",
+            "Mengoptimalkan penjualan persediaan atribut seragam sekolah dan barang konsumsi pertokoan untuk mendongkrak perolehan SHU tahunan."
+          ]
+        }
+      },
+      "rekonsiliasiLPJ": {
+        "keterangan": "Tabel Rekonsiliasi & Penyelarasan Angka LPJ Tahun Buku 2025 → Laporan Keuangan SAK EP 2025",
+        "kesimpulan": "100% Cocok & Terkunci. Seluruh angka Laporan Posisi Keuangan, PHU, Arus Kas, Perubahan Ekuitas, dan CALK telah direkonsiliasi penuh mengacu pada pembukuan Koperasi Warga Bahagia 2025 dengan selisih Rp 0.",
+        "items": [
+          {
+            "komponen": "Kas + Bank",
+            "angkaLPJ": 376785733,
+            "angkaSAKEP": 376785733,
+            "selisih": 0,
+            "status": "COCOK",
+            "keterangan": "Kas Rp 5.747.047 + Bank Rp 371.038.686"
+          },
+          {
+            "komponen": "Piutang Uang Anggota",
+            "angkaLPJ": 566226683,
+            "angkaSAKEP": 566226683,
+            "selisih": 0,
+            "status": "COCOK",
+            "keterangan": "Pinjaman uang lancar via payroll"
+          },
+          {
+            "komponen": "Piutang Barang Anggota",
+            "angkaLPJ": 12141200,
+            "angkaSAKEP": 12141200,
+            "selisih": 0,
+            "status": "COCOK",
+            "keterangan": "Cicilan barang toko & seragam"
+          },
+          {
+            "komponen": "Persediaan Barang Dagang",
+            "angkaLPJ": 69544023,
+            "angkaSAKEP": 69544023,
+            "selisih": 0,
+            "status": "COCOK",
+            "keterangan": "Toko Rp 8.565.023 + PSAS/Seragam Rp 60.979.000"
+          },
+          {
+            "komponen": "Aset Tetap & Inventaris (Neto)",
+            "angkaLPJ": 158484290,
+            "angkaSAKEP": 158484290,
+            "selisih": 0,
+            "status": "COCOK",
+            "keterangan": "Perolehan Rp 188.484.290 - Akum. Depr. Rp 30.000.000"
+          },
+          {
+            "komponen": "TOTAL ASET (AKTIVA)",
+            "angkaLPJ": 1183181929,
+            "angkaSAKEP": 1183181929,
+            "selisih": 0,
+            "status": "COCOK",
+            "keterangan": "Seimbang sempurna / Balance"
+          },
+          {
+            "komponen": "Total Liabilitas Jangka Pendek",
+            "angkaLPJ": 292993153,
+            "angkaSAKEP": 292993153,
+            "selisih": 0,
+            "status": "COCOK",
+            "keterangan": "Simpanan sukarela, hutang pengadaan & beban akrual"
+          },
+          {
+            "komponen": "Simpanan Pokok Anggota",
+            "angkaLPJ": 33000000,
+            "angkaSAKEP": 33000000,
+            "selisih": 0,
+            "status": "COCOK",
+            "keterangan": "Modal pokok anggota tetap"
+          },
+          {
+            "komponen": "Simpanan Wajib Anggota",
+            "angkaLPJ": 681979430,
+            "angkaSAKEP": 681979430,
+            "selisih": 0,
+            "status": "COCOK",
+            "keterangan": "Modal iuran rutin wajib anggota"
+          },
+          {
+            "komponen": "Dana Cadangan Koperasi",
+            "angkaLPJ": 108993547,
+            "angkaSAKEP": 108993547,
+            "selisih": 0,
+            "status": "COCOK",
+            "keterangan": "Pemupukan modal dari SHU lalu"
+          },
+          {
+            "komponen": "Hibah / Modal Donasi",
+            "angkaLPJ": 5000000,
+            "angkaSAKEP": 5000000,
+            "selisih": 0,
+            "status": "COCOK",
+            "keterangan": "Modal penyertaan kelembagaan"
+          },
+          {
+            "komponen": "Subtotal Ekuitas Sebelum SHU",
+            "angkaLPJ": 828972977,
+            "angkaSAKEP": 828972977,
+            "selisih": 0,
+            "status": "COCOK",
+            "keterangan": "Modal sendiri sebelum alokasi SHU berjalan"
+          },
+          {
+            "komponen": "Sisa Hasil Usaha (SHU) 2025",
+            "angkaLPJ": 61215799,
+            "angkaSAKEP": 61215799,
+            "selisih": 0,
+            "status": "COCOK",
+            "keterangan": "Pendapatan Rp 169.530.887 - Beban Rp 108.315.088"
+          },
+          {
+            "komponen": "Total Ekuitas (Setelah SHU)",
+            "angkaLPJ": 890188776,
+            "angkaSAKEP": 890188776,
+            "selisih": 0,
+            "status": "COCOK",
+            "keterangan": "Ekuitas Rp 828.972.977 + SHU Rp 61.215.799"
+          },
+          {
+            "komponen": "TOTAL LIABILITAS & EKUITAS",
+            "angkaLPJ": 1183181929,
+            "angkaSAKEP": 1183181929,
+            "selisih": 0,
+            "status": "COCOK",
+            "keterangan": "Seimbang sempurna Rp 1.183.181.929 = Rp 1.183.181.929"
+          }
+        ]
+      }
+    }
+  ],
+  "pengaturan": {
+    "username": "Warga Bahagia",
+    "password": "19",
+    "namaAdmin": "Pengurus Koperasi Warga Bahagia",
+    "emailAdmin": "koperasi.sman19bdg@gmail.com",
+    "noHpAdmin": "0812-2301-9190",
+    "namaKoperasi": "KOPERASI PEGAWAI \"WARGA BAHAGIA\"",
+    "instansiInduk": "PEMERINTAH DAERAH PROVINSI JAWA BARAT\nDINAS PENDIDIKAN - SMA NEGERI 19 BANDUNG",
+    "badanHukum": "Badan Hukum KPRI No. 19/BH/KWK/1998 · Tgl 19 Mei 1998",
+    "alamatKoperasi": "Jl. Dago Asri No. 19, Kel. Dago, Kec. Coblong, Kota Bandung 40135",
+    "teleponKoperasi": "(022) 2501919",
+    "emailKoperasi": "koperasi.sman19bdg@gmail.com",
+    "websiteKoperasi": "sman19bdg.sch.id",
+    "tampilkanLogoKop": true,
+    "tampilkanLogoKiriKop": true,
+    "tampilkanLogoKananKop": true,
+    "warnaGarisKop": "emerald",
+    "catatanKakiKop": "Dokumen ini diterbitkan secara sah dan resmi oleh Sistem Informasi Manajemen Koperasi Pegawai SMAN 19 Bandung.",
+    "namaKetua": "Drs. H. Ahmad Sudrajat, M.Pd.",
+    "nipKetua": "19680512 199403 1 004",
+    "namaBendahara": "Hj. Siti Rohmah, S.Pd., M.M.",
+    "nipBendahara": "19740920 199802 2 001",
+    "namaSekretaris": "Dra. Hj. Neneng Suryani, M.M.Pd.",
+    "nipSekretaris": "19710315 199601 2 002",
+    "logoUrl": "",
+    "logoKananUrl": "",
+    "terakhirDiperbarui": "2026-09-30"
+  },
+  "lastUpdated": "2026-09-30T13:13:45.061Z"
+}

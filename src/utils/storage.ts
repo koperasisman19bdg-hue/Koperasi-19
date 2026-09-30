@@ -355,7 +355,7 @@ function mergeEntityArrays<T extends { id?: string }>(localArr: T[], serverArr: 
 }
 
 // Optimized Background Sync to Server with Request Coalescing / Debounce
-function syncToServer(key: string, data: any, isBootstrap: boolean = false) {
+function syncToServer(key: string, data: any, isBootstrap: boolean = false, immediate: boolean = false) {
   const serverKey = KEY_TO_SERVER_MAP[key];
   if (!serverKey || typeof window === 'undefined') return;
   if (isReceivingServerUpdate && !isBootstrap) return;
@@ -371,7 +371,7 @@ function syncToServer(key: string, data: any, isBootstrap: boolean = false) {
     clearTimeout(debounceSyncTimers.get(key));
   }
 
-  const delayMs = isBootstrap ? 0 : 150; // 150ms debounce window to batch rapid successive writes
+  const delayMs = immediate || isBootstrap ? 0 : 50;
 
   const timer = setTimeout(async () => {
     debounceSyncTimers.delete(key);
@@ -385,6 +385,7 @@ function syncToServer(key: string, data: any, isBootstrap: boolean = false) {
         body: JSON.stringify({
           key: serverKey,
           data,
+          force: true,
           clientId: CLIENT_ID,
           entityName: ENTITY_DISPLAY_NAMES[serverKey] || serverKey
         })
@@ -451,20 +452,13 @@ function syncToServer(key: string, data: any, isBootstrap: boolean = false) {
         if (serverData === undefined) return;
 
         const currentLocalRaw = localStorage.getItem(localKey);
-        const currentLocal = currentLocalRaw ? JSON.parse(currentLocalRaw) : null;
 
-        // SAFE ADOPT & ANTI-WIPE BOOTSTRAP LOGIC:
         if (Array.isArray(serverData)) {
-          if (serverData.length === 0 && Array.isArray(currentLocal) && currentLocal.length > 0) {
-            // Server is empty, but Local has initial data -> Bootstrap the server!
-            syncToServer(localKey, currentLocal, true);
-          } else {
-            // Adopt server data directly as the absolute single source of truth
-            const serverStr = JSON.stringify(serverData);
-            if (serverStr !== currentLocalRaw) {
-              localStorage.setItem(localKey, serverStr);
-              hasUpdates = true;
-            }
+          // Adopt server data directly as the absolute single source of truth
+          const serverStr = JSON.stringify(serverData);
+          if (serverStr !== currentLocalRaw) {
+            localStorage.setItem(localKey, serverStr);
+            hasUpdates = true;
           }
         } else if (typeof serverData === 'object' && serverData !== null) {
           // Pengaturan object
@@ -1386,9 +1380,28 @@ export const StorageService = {
       this.savePinjamanBarang(pinjamanBarangList);
     }
   },
-  deleteAnggota(id: string): void {
-    const list = this.getAnggota().filter(a => a.id !== id);
+  deleteAnggota(id: string, deleteRelated: boolean = true): void {
+    const list = this.getAnggota().filter(a => String(a.id) !== String(id));
     this.saveAnggota(list);
+    syncToServer(KEYS.ANGGOTA, list, false, true);
+
+    if (deleteRelated) {
+      const simpanan = this.getSimpanan().filter(s => String(s.anggotaId) !== String(id));
+      this.saveSimpanan(simpanan);
+      syncToServer(KEYS.SIMPANAN, simpanan, false, true);
+
+      const pinjamanUang = this.getPinjamanUang().filter(p => String(p.anggotaId) !== String(id));
+      this.savePinjamanUang(pinjamanUang);
+      syncToServer(KEYS.PINJAMAN_UANG, pinjamanUang, false, true);
+
+      const pinjamanBarang = this.getPinjamanBarang().filter(p => String(p.anggotaId) !== String(id));
+      this.savePinjamanBarang(pinjamanBarang);
+      syncToServer(KEYS.PINJAMAN_BARANG, pinjamanBarang, false, true);
+
+      const pengajuan = this.getPengajuan().filter(p => String(p.anggotaId) !== String(id));
+      this.savePengajuan(pengajuan);
+      syncToServer(KEYS.PENGAJUAN, pengajuan, false, true);
+    }
   },
 
   // Jurnal Umum
@@ -1471,6 +1484,7 @@ export const StorageService = {
       };
     });
     this.saveJurnal(updated);
+    syncToServer(KEYS.JURNAL, updated, false, true);
   },
 
   // Simpanan
@@ -1506,6 +1520,7 @@ export const StorageService = {
   deleteSimpanan(id: string): void {
     const list = this.getSimpanan().filter(s => s.id !== id);
     this.saveSimpanan(list);
+    syncToServer(KEYS.SIMPANAN, list, false, true);
   },
 
   // Pinjaman Uang
@@ -1537,6 +1552,7 @@ export const StorageService = {
   deletePinjamanUang(id: string): void {
     const list = this.getPinjamanUang().filter(p => p.id !== id);
     this.savePinjamanUang(list);
+    syncToServer(KEYS.PINJAMAN_UANG, list, false, true);
   },
 
   // Pinjaman Barang
@@ -1568,6 +1584,7 @@ export const StorageService = {
   deletePinjamanBarang(id: string): void {
     const list = this.getPinjamanBarang().filter(p => p.id !== id);
     this.savePinjamanBarang(list);
+    syncToServer(KEYS.PINJAMAN_BARANG, list, false, true);
   },
 
   // Pengajuan Pinjaman
@@ -1580,6 +1597,7 @@ export const StorageService = {
   deletePengajuan(id: string): void {
     const list = this.getPengajuan().filter(p => p.id !== id);
     this.savePengajuan(list);
+    syncToServer(KEYS.PENGAJUAN, list, false, true);
   },
   addPengajuan(item: Omit<PengajuanPinjaman, 'id' | 'dibaca' | 'status'>): PengajuanPinjaman {
     const list = this.getPengajuan();
@@ -1711,6 +1729,7 @@ export const StorageService = {
   deleteToko(id: string): void {
     const list = this.getToko().filter(t => t.id !== id);
     this.saveToko(list);
+    syncToServer(KEYS.TOKO, list, false, true);
   },
 
   // Seragam
@@ -1733,6 +1752,7 @@ export const StorageService = {
   deleteSeragam(id: string): void {
     const list = this.getSeragam().filter(s => s.id !== id);
     this.saveSeragam(list);
+    syncToServer(KEYS.SERAGAM, list, false, true);
   },
 
   // Pengaturan Akun & Koperasi
@@ -1966,16 +1986,11 @@ export const StorageService = {
         const currentLocal = currentLocalRaw ? JSON.parse(currentLocalRaw) : null;
 
         if (Array.isArray(serverData)) {
-          // If server database is empty but local has data, upload local data to server
-          if (serverData.length === 0 && Array.isArray(currentLocal) && currentLocal.length > 0) {
-            syncToServer(localKey, currentLocal);
-          } else {
-            // Adopt server data directly
-            const serverStr = JSON.stringify(serverData);
-            if (serverStr !== currentLocalRaw) {
-              localStorage.setItem(localKey, serverStr);
-              hasUpdates = true;
-            }
+          // Adopt server data directly as the absolute single source of truth
+          const serverStr = JSON.stringify(serverData);
+          if (serverStr !== currentLocalRaw) {
+            localStorage.setItem(localKey, serverStr);
+            hasUpdates = true;
           }
         } else if (typeof serverData === 'object' && serverData !== null) {
           const serverStr = JSON.stringify(serverData);

@@ -50,6 +50,10 @@ export const SimpananAnggota: React.FC<SimpananAnggotaProps> = ({
   const [editWajib, setEditWajib] = useState(0);
   const [editSukarela, setEditSukarela] = useState(0);
 
+  // Delete Confirmation Modal states
+  const [deleteTarget, setDeleteTarget] = useState<SimpananRecord | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   // Totals
   const totalPokok = simpananList.reduce((acc, curr) => acc + (curr.simpananPokok || 0), 0);
   const totalWajib = simpananList.reduce((acc, curr) => acc + (curr.simpananWajib || 0), 0);
@@ -85,12 +89,24 @@ export const SimpananAnggota: React.FC<SimpananAnggotaProps> = ({
     setEditSukarela(rec.simpananSukarela);
   };
 
-  const handleDeleteSimpanan = (id: string, namaAnggota: string) => {
-    if (window.confirm(`Apakah Anda yakin ingin menghapus data buku simpanan untuk anggota "${namaAnggota}"?`)) {
-      StorageService.deleteSimpanan(id);
-      setToastNotification(`Data simpanan "${namaAnggota}" berhasil dihapus.`);
+  const handleDeleteClick = (rec: SimpananRecord) => {
+    setDeleteTarget(rec);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
+    try {
+      const targetName = deleteTarget.namaAnggota;
+      StorageService.deleteSimpanan(deleteTarget.id);
+      setToastNotification(`Data simpanan "${targetName}" berhasil dihapus.`);
+      setDeleteTarget(null);
       onDataChanged();
       setTimeout(() => setToastNotification(null), 4000);
+    } catch (err: any) {
+      alert('Gagal menghapus data simpanan: ' + (err.message || 'Terjadi kesalahan sistem'));
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -371,8 +387,8 @@ export const SimpananAnggota: React.FC<SimpananAnggotaProps> = ({
                             <span>Edit</span>
                           </button>
                           <button
-                            onClick={() => handleDeleteSimpanan(rec.id, rec.namaAnggota)}
-                            className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-rose-700 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 rounded-md border border-rose-200 transition-colors shadow-2xs"
+                            onClick={() => handleDeleteClick(rec)}
+                            className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-rose-700 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 rounded-md border border-rose-200 transition-colors shadow-2xs cursor-pointer"
                             title="Hapus data simpanan ini"
                           >
                             <Trash2 className="w-3.5 h-3.5 text-rose-600" />
@@ -619,22 +635,127 @@ export const SimpananAnggota: React.FC<SimpananAnggotaProps> = ({
                 </span>
               </div>
 
-              <div className="pt-4 border-t border-slate-200 flex items-center justify-end gap-2">
+              <div className="pt-4 border-t border-slate-200 flex items-center justify-between gap-2">
                 <button
                   type="button"
-                  onClick={() => setEditingRecord(null)}
-                  className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium"
+                  onClick={() => {
+                    const toDelete = editingRecord;
+                    setEditingRecord(null);
+                    handleDeleteClick(toDelete);
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-2 border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg font-semibold transition-colors cursor-pointer"
                 >
-                  Batal
+                  <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                  <span>Hapus Simpanan</span>
                 </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold shadow-xs"
-                >
-                  Simpan Perubahan
-                </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditingRecord(null)}
+                    className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium cursor-pointer"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold shadow-xs cursor-pointer transition-colors"
+                  >
+                    Simpan Perubahan
+                  </button>
+                </div>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL KONFIRMASI HAPUS SIMPANAN */}
+      {deleteTarget && (
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95">
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-rose-50">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
+                  <Trash2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 text-base">
+                    Hapus Data Simpanan
+                  </h3>
+                  <p className="text-xs text-rose-700 font-medium">
+                    Konfirmasi penghapusan buku tabungan simpanan
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDeleteTarget(null)}
+                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-200/60 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-4 text-xs">
+              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                  <span className="text-slate-500 font-medium">Nama Anggota:</span>
+                  <span className="font-bold text-slate-900">{deleteTarget.namaAnggota}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500 font-medium">Nomor Anggota:</span>
+                  <span className="font-mono font-bold text-emerald-700">{deleteTarget.nomorAnggota}</span>
+                </div>
+                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-200 text-center">
+                  <div className="bg-white p-2 rounded-lg border border-slate-200">
+                    <div className="text-[10px] text-slate-500">Pokok</div>
+                    <div className="font-bold text-slate-800 text-[11px] mt-0.5">{formatRupiah(deleteTarget.simpananPokok)}</div>
+                  </div>
+                  <div className="bg-white p-2 rounded-lg border border-slate-200">
+                    <div className="text-[10px] text-slate-500">Wajib</div>
+                    <div className="font-bold text-teal-700 text-[11px] mt-0.5">{formatRupiah(deleteTarget.simpananWajib)}</div>
+                  </div>
+                  <div className="bg-white p-2 rounded-lg border border-slate-200">
+                    <div className="text-[10px] text-slate-500">Sukarela</div>
+                    <div className="font-bold text-indigo-700 text-[11px] mt-0.5">{formatRupiah(deleteTarget.simpananSukarela)}</div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between pt-2 border-t border-slate-200 text-slate-900 font-bold">
+                  <span>Total Saldo Simpanan:</span>
+                  <span className="font-mono text-emerald-800">
+                    {formatRupiah((deleteTarget.simpananPokok || 0) + (deleteTarget.simpananWajib || 0) + (deleteTarget.simpananSukarela || 0))}
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-slate-600 leading-relaxed">
+                Apakah Anda yakin ingin menghapus data buku simpanan untuk anggota <strong className="text-slate-900">{deleteTarget.namaAnggota}</strong>? Tindakan ini akan menghapus catatan simpanan pokok, wajib, dan sukarela anggota ini dari pembukuan simpanan.
+              </p>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={() => setDeleteTarget(null)}
+                disabled={isDeleting}
+                className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-100 font-medium text-xs transition-colors cursor-pointer"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+                className="flex items-center gap-1.5 px-4 py-2 bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-bold text-xs rounded-lg shadow-xs transition-colors cursor-pointer"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>{isDeleting ? 'Menghapus...' : 'Ya, Hapus Simpanan'}</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
