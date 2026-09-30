@@ -46,6 +46,7 @@ import {
   signOutFromGoogleDrive,
   pushDatabaseToGoogleDrive,
   pullDatabaseFromGoogleDrive,
+  connectWithAccessToken,
   DriveSyncStatus,
   DRIVE_DATABASE_FILENAME
 } from '../services/googleDriveService';
@@ -61,6 +62,9 @@ export const PengaturanAkunPage: React.FC<PengaturanAkunPageProps> = ({ onPengat
   // Google Drive state
   const [driveStatus, setDriveStatus] = useState<DriveSyncStatus>(() => getDriveSyncStatus());
   const [isDriveLoading, setIsDriveLoading] = useState(false);
+  const [copiedDriveDomain, setCopiedDriveDomain] = useState(false);
+  const [manualTokenInput, setManualTokenInput] = useState('');
+  const [showManualTokenForm, setShowManualTokenForm] = useState(false);
 
   // Server health test state
   const [isTestingServer, setIsTestingServer] = useState(false);
@@ -1639,6 +1643,135 @@ export const PengaturanAkunPage: React.FC<PengaturanAkunPageProps> = ({ onPengat
               </div>
             </div>
           </div>
+
+          {/* Warning / Resolution Card if Firebase auth/unauthorized-domain occurs */}
+          {driveStatus.isUnauthorizedDomain && (
+            <div className="bg-amber-50 border border-amber-300 rounded-2xl p-5 space-y-4 animate-in fade-in">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="text-sm font-bold text-amber-950">
+                    Otorisasi Domain Diperlukan untuk Login Pop-Up Google (auth/unauthorized-domain)
+                  </h4>
+                  <p className="text-xs text-amber-800 mt-1 leading-relaxed">
+                    Firebase Authentication memerlukan domain container preview ini didaftarkan di Firebase Console agar otorisasi pop-up Google dapat berjalan.
+                  </p>
+                </div>
+              </div>
+
+              {/* Domain Copy Box */}
+              <div className="p-3 bg-white rounded-xl border border-amber-200 flex items-center justify-between gap-3 shadow-2xs">
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Domain Container Anda:</span>
+                  <span className="font-mono text-xs font-bold text-slate-800 select-all">
+                    {driveStatus.unauthorizedHostname || window.location.hostname}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const domain = driveStatus.unauthorizedHostname || window.location.hostname;
+                    navigator.clipboard.writeText(domain);
+                    setCopiedDriveDomain(true);
+                    setTimeout(() => setCopiedDriveDomain(false), 3000);
+                  }}
+                  className="px-3 py-1.5 text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer shrink-0"
+                >
+                  {copiedDriveDomain ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                  <span>{copiedDriveDomain ? 'Tersalin!' : 'Salin Domain'}</span>
+                </button>
+              </div>
+
+              {/* Instructions */}
+              <div className="bg-amber-100/70 p-3 rounded-xl border border-amber-200 text-xs text-amber-950 space-y-1.5">
+                <span className="font-bold block">Langkah 1 Menit Menambahkan Domain:</span>
+                <ol className="list-decimal list-inside space-y-1 text-amber-900 text-[11px]">
+                  <li>Klik tombol <strong>"Buka Firebase Console"</strong> di bawah.</li>
+                  <li>Pada tab <strong>Authorized domains</strong>, klik tombol <strong>"Add domain"</strong>.</li>
+                  <li>Tempel (paste) nama domain yang sudah disalin di atas, lalu klik <strong>"Save"</strong>.</li>
+                  <li>Kembali ke aplikasi ini dan klik <strong>"Coba Hubungkan Lagi"</strong>.</li>
+                </ol>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <a
+                  href={driveStatus.firebaseConsoleUrl || `https://console.firebase.google.com/project/gen-lang-client-0907905260/authentication/settings`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors shadow-xs"
+                >
+                  <span>Buka Firebase Console (Authorized Domains)</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setIsDriveLoading(true);
+                    try {
+                      await signInWithGoogleDrive();
+                      setSuccessMessage('Berhasil terhubung ke Google Drive!');
+                    } catch (e: any) {
+                      setErrorMessage(e.message || 'Gagal menghubungkan Google Drive.');
+                    } finally {
+                      setIsDriveLoading(false);
+                    }
+                  }}
+                  disabled={isDriveLoading}
+                  className="px-4 py-2 bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isDriveLoading ? 'animate-spin' : ''}`} />
+                  <span>Coba Hubungkan Lagi</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowManualTokenForm(!showManualTokenForm)}
+                  className="text-xs text-amber-800 hover:text-amber-950 underline font-medium cursor-pointer ml-auto"
+                >
+                  {showManualTokenForm ? 'Tutup Input Token' : 'Atau Input Access Token Manual'}
+                </button>
+              </div>
+
+              {showManualTokenForm && (
+                <div className="p-3 bg-white rounded-xl border border-amber-200 mt-2 space-y-2">
+                  <label className="block text-xs font-semibold text-slate-700">
+                    Masukkan Access Token Google Drive (Bypass Instan):
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="password"
+                      value={manualTokenInput}
+                      onChange={(e) => setManualTokenInput(e.target.value)}
+                      placeholder="ya29.a0..."
+                      className="flex-1 px-3 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (!manualTokenInput.trim()) return;
+                        setIsDriveLoading(true);
+                        try {
+                          await connectWithAccessToken(manualTokenInput);
+                          setSuccessMessage('Berhasil terhubung ke Google Drive dengan Access Token!');
+                          setShowManualTokenForm(false);
+                          setManualTokenInput('');
+                        } catch (e: any) {
+                          setErrorMessage(e.message || 'Gagal memverifikasi token.');
+                        } finally {
+                          setIsDriveLoading(false);
+                        }
+                      }}
+                      disabled={isDriveLoading || !manualTokenInput.trim()}
+                      className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold cursor-pointer disabled:opacity-50"
+                    >
+                      Hubungkan Token
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Grid Information Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

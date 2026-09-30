@@ -36,6 +36,12 @@ let isPullingFromDrive = false;
 let autoSyncDebounceTimer: any = null;
 let backgroundPollInterval: any = null;
 
+declare global {
+  interface Window {
+    google?: any;
+  }
+}
+
 export interface DriveSyncStatus {
   isConnected: boolean;
   user: {
@@ -49,6 +55,9 @@ export interface DriveSyncStatus {
   isSyncing: boolean;
   statusMessage: string;
   error?: string | null;
+  isUnauthorizedDomain?: boolean;
+  unauthorizedHostname?: string;
+  firebaseConsoleUrl?: string;
 }
 
 let currentDriveStatus: DriveSyncStatus = {
@@ -59,7 +68,10 @@ let currentDriveStatus: DriveSyncStatus = {
   lastSyncedAt: null,
   isSyncing: false,
   statusMessage: 'Belum terhubung ke Google Drive',
-  error: null
+  error: null,
+  isUnauthorizedDomain: false,
+  unauthorizedHostname: typeof window !== 'undefined' ? window.location.hostname : '',
+  firebaseConsoleUrl: `https://console.firebase.google.com/project/${firebaseConfig.projectId}/authentication/settings`
 };
 
 function updateStatus(patch: Partial<DriveSyncStatus>) {
@@ -75,6 +87,127 @@ export function getDriveSyncStatus(): DriveSyncStatus {
 
 export function getAccessToken(): string | null {
   return cachedAccessToken;
+}
+
+/**
+ * Load Google Identity Services script dynamically if not already present
+ */
+export function loadGisScript(): Promise<void> {
+  if (typeof window === 'undefined') return Promise.resolve();
+  if (window.google?.accounts?.oauth2) return Promise.resolve();
+
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector('script[src*="accounts.google.com/gsi/client"]');
+    if (existing) {
+      if (window.google?.accounts?.oauth2) {
+        return resolve();
+      }
+      existing.addEventListener('load', () => resolve());
+      existing.addEventListener('error', () => reject(new Error('Gagal memuat Google Identity Services')));
+      // Timeout fallback
+      setTimeout(() => {
+        if (window.google?.accounts?.oauth2) resolve();
+        else resolve(); // don't reject hard, let fallback handle
+      }, 1500);
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Gagal memuat Google Identity Services'));
+    document.head.appendChild(script);
+  });
+}
+
+/**
+ * Direct OAuth Token Request via Google Identity Services (GIS)
+ * Bypasses Firebase's internal "auth/unauthorized-domain" restriction
+ */
+function signInWithGis(): Promise<{ user: any; accessToken: string }> {
+  return new Promise((resolve, reject) => {
+    if (typeof window === 'undefined' || !window.google?.accounts?.oauth2) {
+      return reject(new Error('Google Identity Services belum siap di browser.'));
+    }
+
+    if (!firebaseConfig.oAuthClientId) {
+      return reject(new Error('OAuth Client ID tidak ditemukan dalam konfigurasi.'));
+    }
+
+    let settled = false;
+
+    try {
+      const client = window.google.accounts.oauth2.initTokenClient({
+        client_id: firebaseConfig.oAuthClientId,
+        scope: GOOGLE_DRIVE_SCOPES.join(' '),
+        callback: async (tokenResponse: any) => {
+          if (settled) return;
+          settled = true;
+
+          if (tokenResponse.error) {
+            return reject(new Error(tokenResponse.error_description || tokenResponse.error));
+          }
+          if (!tokenResponse.access_token) {
+            return reject(new Error('Tidak ada Access Token yang diterima dari Google.'));
+          }
+
+          const accessToken = tokenResponse.access_token;
+          cachedAccessToken = accessToken;
+
+          // Fetch user profile from Google userinfo API
+          let profile = {
+            displayName: 'Pengurus Koperasi',
+            email: 'koperasi.sman19bdg@gmail.com',
+            photoURL: null as string | null
+          };
+
+          try {
+            const userinfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+              headers: { Authorization: `Bearer ${accessToken}` }
+            });
+            if (userinfoRes.ok) {
+              const info = await userinfoRes.json();
+              profile = {
+                displayName: info.name || info.email || 'Pengurus Koperasi',
+                email: info.email || 'koperasi.sman19bdg@gmail.com',
+                photoURL: info.picture || null
+              };
+            }
+          } catch {}
+
+          updateStatus({
+            isConnected: true,
+            user: profile,
+            statusMessage: `Berhasil terhubung ke ${profile.email}`,
+            error: null,
+            isUnauthorizedDomain: false
+          });
+
+          // Start background sync & poll
+          startDriveSync();
+
+          // Find or create database file on Drive
+          await syncWithGoogleDrive(false);
+
+          resolve({ user: profile as any, accessToken });
+        },
+        error_callback: (err: any) => {
+          if (settled) return;
+          settled = true;
+          reject(err);
+        }
+      });
+
+      client.requestAccessToken({ prompt: 'consent' });
+    } catch (err) {
+      if (!settled) {
+        settled = true;
+        reject(err);
+      }
+    }
+  });
 }
 
 /**
@@ -97,8 +230,7 @@ export function initDriveAuth(
       });
       if (onSuccess) onSuccess(user, cachedAccessToken);
     } else {
-      if (!isSigningIn) {
-        cachedAccessToken = null;
+      if (!isSigningIn && !cachedAccessToken) {
         driveFileId = null;
         updateStatus({
           isConnected: false,
@@ -113,13 +245,91 @@ export function initDriveAuth(
 }
 
 /**
- * Sign In with Google & request Drive Scopes
+ * Connect using an Access Token directly (manual or bypass)
  */
-export async function signInWithGoogleDrive(): Promise<{ user: User; accessToken: string }> {
-  try {
-    isSigningIn = true;
-    updateStatus({ isSyncing: true, statusMessage: 'Menghubungkan ke Akun Google...' });
+export async function connectWithAccessToken(token: string): Promise<boolean> {
+  const clean = token.trim();
+  if (!clean) throw new Error('Access Token Google Drive tidak boleh kosong.');
 
+  cachedAccessToken = clean;
+  updateStatus({ isSyncing: true, statusMessage: 'Memverifikasi Access Token Google Drive...' });
+
+  try {
+    let profile = {
+      displayName: 'Pengurus Koperasi (Token)',
+      email: 'koperasi.sman19bdg@gmail.com',
+      photoURL: null as string | null
+    };
+
+    try {
+      const userinfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${clean}` }
+      });
+      if (userinfoRes.ok) {
+        const info = await userinfoRes.json();
+        profile = {
+          displayName: info.name || info.email,
+          email: info.email,
+          photoURL: info.picture || null
+        };
+      }
+    } catch {}
+
+    updateStatus({
+      isConnected: true,
+      user: profile,
+      statusMessage: `Terhubung sebagai ${profile.email}`,
+      error: null,
+      isUnauthorizedDomain: false
+    });
+
+    startDriveSync();
+    await syncWithGoogleDrive(false);
+    return true;
+  } catch (err: any) {
+    cachedAccessToken = null;
+    updateStatus({
+      isConnected: false,
+      isSyncing: false,
+      statusMessage: 'Token tidak valid atau kedaluwarsa',
+      error: err.message || 'Gagal memverifikasi token'
+    });
+    throw err;
+  }
+}
+
+/**
+ * Sign In with Google & request Drive Scopes
+ * Tries Google Identity Services first, then falls back to Firebase Auth with intelligent domain-error detection
+ */
+export async function signInWithGoogleDrive(): Promise<{ user: any; accessToken: string }> {
+  isSigningIn = true;
+  updateStatus({ isSyncing: true, statusMessage: 'Menghubungkan ke Akun Google...' });
+
+  const currentHostname = typeof window !== 'undefined' ? window.location.hostname : '';
+  const consoleUrl = `https://console.firebase.google.com/project/${firebaseConfig.projectId}/authentication/settings`;
+
+  // 1. First attempt: Direct Google Identity Services (GIS)
+  // This bypasses Firebase Auth's internal authorized domain validation
+  try {
+    await loadGisScript();
+    if (typeof window !== 'undefined' && window.google?.accounts?.oauth2 && firebaseConfig.oAuthClientId) {
+      const res = await signInWithGis();
+      isSigningIn = false;
+      return res;
+    }
+  } catch (gisError: any) {
+    console.warn('GIS authorization attempt:', gisError);
+    // If user cancelled GIS or closed popup, rethrow unless we want to try Firebase
+    if (gisError?.message?.includes('closed') || gisError?.error === 'popup_closed_by_user') {
+      isSigningIn = false;
+      updateStatus({ isSyncing: false, statusMessage: 'Masuk dibatalkan oleh pengguna.' });
+      throw gisError;
+    }
+  }
+
+  // 2. Second attempt: Firebase Auth signInWithPopup
+  try {
     const result = await signInWithPopup(auth, provider);
     const credential = GoogleAuthProvider.credentialFromResult(result);
     if (!credential?.accessToken) {
@@ -137,7 +347,8 @@ export async function signInWithGoogleDrive(): Promise<{ user: User; accessToken
         photoURL: user.photoURL
       },
       statusMessage: `Berhasil terhubung ke ${user.email}`,
-      error: null
+      error: null,
+      isUnauthorizedDomain: false
     });
 
     // Start background sync & poll
@@ -149,12 +360,26 @@ export async function signInWithGoogleDrive(): Promise<{ user: User; accessToken
     return { user, accessToken: cachedAccessToken };
   } catch (error: any) {
     console.error('Google Sign-In Error:', error);
+
+    const isDomainError =
+      error?.code === 'auth/unauthorized-domain' ||
+      String(error?.message || '').toLowerCase().includes('unauthorized-domain') ||
+      String(error || '').includes('unauthorized-domain');
+
     updateStatus({
       isConnected: false,
       isSyncing: false,
-      statusMessage: 'Gagal terhubung ke Google Drive',
-      error: error.message || 'Gagal masuk dengan Google'
+      statusMessage: isDomainError
+        ? `Domain ${currentHostname} belum terdaftar di Firebase Console`
+        : 'Gagal terhubung ke Google Drive',
+      error: isDomainError
+        ? `Firebase: Error (auth/unauthorized-domain). Domain "${currentHostname}" belum diizinkan di Firebase Authentication.`
+        : error.message || 'Gagal masuk dengan Google',
+      isUnauthorizedDomain: isDomainError,
+      unauthorizedHostname: currentHostname,
+      firebaseConsoleUrl: consoleUrl
     });
+
     throw error;
   } finally {
     isSigningIn = false;

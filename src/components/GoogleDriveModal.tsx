@@ -14,7 +14,10 @@ import {
   Smartphone,
   Laptop,
   ArrowRight,
-  Database
+  Database,
+  Copy,
+  Check,
+  Key
 } from 'lucide-react';
 import {
   getDriveSyncStatus,
@@ -23,6 +26,7 @@ import {
   syncWithGoogleDrive,
   pushDatabaseToGoogleDrive,
   pullDatabaseFromGoogleDrive,
+  connectWithAccessToken,
   DriveSyncStatus,
   DRIVE_DATABASE_FILENAME
 } from '../services/googleDriveService';
@@ -37,6 +41,9 @@ export const GoogleDriveModal: React.FC<GoogleDriveModalProps> = ({ isOpen, onCl
   const [isLoading, setIsLoading] = useState(false);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [copiedDomain, setCopiedDomain] = useState(false);
+  const [showTokenInput, setShowTokenInput] = useState(false);
+  const [manualToken, setManualToken] = useState('');
 
   useEffect(() => {
     const handleStatusChange = (e: any) => {
@@ -54,6 +61,31 @@ export const GoogleDriveModal: React.FC<GoogleDriveModalProps> = ({ isOpen, onCl
   }, []);
 
   if (!isOpen) return null;
+
+  const handleCopyDomain = () => {
+    const domain = status.unauthorizedHostname || window.location.hostname;
+    navigator.clipboard.writeText(domain);
+    setCopiedDomain(true);
+    setTimeout(() => setCopiedDomain(false), 3000);
+  };
+
+  const handleConnectWithToken = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!manualToken.trim()) return;
+    setIsLoading(true);
+    setActionError(null);
+    try {
+      await connectWithAccessToken(manualToken);
+      setActionSuccess('Berhasil terhubung ke Google Drive menggunakan Access Token!');
+      setShowTokenInput(false);
+      setManualToken('');
+      setTimeout(() => setActionSuccess(null), 4000);
+    } catch (err: any) {
+      setActionError(err.message || 'Gagal memverifikasi Access Token.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSignIn = async () => {
     setIsLoading(true);
@@ -170,6 +202,71 @@ export const GoogleDriveModal: React.FC<GoogleDriveModalProps> = ({ isOpen, onCl
             <div className="p-3 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
               <span>{actionError}</span>
+            </div>
+          )}
+
+          {/* Interactive Helper Card for Firebase auth/unauthorized-domain */}
+          {(status.isUnauthorizedDomain || actionError?.includes('unauthorized-domain')) && (
+            <div className="p-4 bg-amber-50/90 border border-amber-300 rounded-2xl space-y-3 animate-in fade-in">
+              <div className="flex items-start gap-2.5">
+                <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                <div>
+                  <h5 className="text-xs font-bold text-amber-900">
+                    Otorisasi Domain Diperlukan (auth/unauthorized-domain)
+                  </h5>
+                  <p className="text-[11px] text-amber-800 mt-0.5 leading-relaxed">
+                    Firebase Authentication membatasi login pop-up hanya dari domain yang terdaftar. Salin domain berikut dan tambahkan ke Firebase Console:
+                  </p>
+                </div>
+              </div>
+
+              {/* Domain Copy Box */}
+              <div className="p-2.5 bg-white rounded-xl border border-amber-200 flex items-center justify-between gap-2 shadow-2xs">
+                <span className="font-mono text-xs font-bold text-slate-800 truncate select-all">
+                  {status.unauthorizedHostname || window.location.hostname}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleCopyDomain}
+                  className="px-2.5 py-1 text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-lg transition-colors flex items-center gap-1 shrink-0 cursor-pointer"
+                >
+                  {copiedDomain ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedDomain ? 'Tersalin!' : 'Salin Domain'}</span>
+                </button>
+              </div>
+
+              {/* 3 Step Instruction */}
+              <div className="text-[11px] text-amber-900 space-y-1 bg-amber-100/60 p-2.5 rounded-xl border border-amber-200">
+                <span className="font-bold text-amber-950 block">Langkah 1 Menit:</span>
+                <ol className="list-decimal list-inside space-y-1 text-amber-900">
+                  <li>Klik tombol <strong>"Buka Firebase Console"</strong> di bawah ini.</li>
+                  <li>Pada tab <strong>Authorized domains</strong>, klik tombol <strong>"Add domain"</strong>.</li>
+                  <li>Tempel nama domain di atas, lalu klik <strong>"Save"</strong>.</li>
+                  <li>Kembali ke tab ini dan klik <strong>"Coba Masuk Lagi"</strong>.</li>
+                </ol>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <a
+                  href={status.firebaseConsoleUrl || `https://console.firebase.google.com/project/gen-lang-client-0907905260/authentication/settings`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 py-2 px-3 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+                >
+                  <span>Buka Firebase Console</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+                <button
+                  type="button"
+                  onClick={handleSignIn}
+                  disabled={isLoading}
+                  className="flex-1 py-2 px-3 bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+                  <span>Coba Masuk Lagi</span>
+                </button>
+              </div>
             </div>
           )}
 
@@ -290,7 +387,7 @@ export const GoogleDriveModal: React.FC<GoogleDriveModalProps> = ({ isOpen, onCl
               </div>
 
               {/* Official Google Sign-In Button (per SKILL.md styling) */}
-              <div className="flex justify-center pt-2">
+              <div className="flex flex-col items-center gap-2 pt-2">
                 <button
                   type="button"
                   onClick={handleSignIn}
@@ -306,6 +403,39 @@ export const GoogleDriveModal: React.FC<GoogleDriveModalProps> = ({ isOpen, onCl
                   </svg>
                   <span>{isLoading ? 'Menghubungkan...' : 'Masuk dengan Akun Google'}</span>
                 </button>
+
+                {/* Option to connect via Token bypass */}
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowTokenInput(!showTokenInput)}
+                    className="text-[11px] text-slate-500 hover:text-blue-700 underline cursor-pointer"
+                  >
+                    {showTokenInput ? 'Sembunyikan Opsi Token Manual' : 'Atau Hubungkan Menggunakan Access Token Manual'}
+                  </button>
+                </div>
+
+                {showTokenInput && (
+                  <form onSubmit={handleConnectWithToken} className="w-full max-w-sm text-left p-3 bg-slate-50 rounded-xl border border-slate-200 mt-2 space-y-2">
+                    <label className="block text-[11px] font-semibold text-slate-700">
+                      Access Token Google Drive:
+                    </label>
+                    <input
+                      type="password"
+                      value={manualToken}
+                      onChange={(e) => setManualToken(e.target.value)}
+                      placeholder="ya29.a0..."
+                      className="w-full px-2.5 py-1.5 text-xs font-mono border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                    <button
+                      type="submit"
+                      disabled={isLoading || !manualToken.trim()}
+                      className="w-full py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold cursor-pointer disabled:opacity-50"
+                    >
+                      Hubungkan dengan Token
+                    </button>
+                  </form>
+                )}
               </div>
             </div>
           )}

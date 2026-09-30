@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Lock, User, Eye, EyeOff, ShieldCheck, ArrowRight, Sparkles, Cloud } from 'lucide-react';
+import { Lock, User, Eye, EyeOff, ShieldCheck, ArrowRight, Sparkles, Cloud, AlertCircle, Copy, Check, ExternalLink } from 'lucide-react';
 import defaultLogoImg from '../assets/images/lambang_koperasi.jpg';
 import { StorageService } from '../utils/storage';
-import { signInWithGoogleDrive } from '../services/googleDriveService';
+import { signInWithGoogleDrive, getDriveSyncStatus } from '../services/googleDriveService';
 
 interface LoginModalProps {
   onSuccess: () => void;
@@ -15,6 +15,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onSuccess, onOpenPublicF
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [isDomainError, setIsDomainError] = useState(false);
+  const [copiedDomain, setCopiedDomain] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -50,17 +52,28 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onSuccess, onOpenPublicF
 
   const handleGoogleSignIn = async () => {
     setError('');
+    setIsDomainError(false);
     setIsLoading(true);
     try {
       await signInWithGoogleDrive();
       StorageService.login();
       onSuccess();
     } catch (err: any) {
-      setError(err.message || 'Gagal masuk dengan Akun Google.');
+      const isDomain =
+        err?.code === 'auth/unauthorized-domain' ||
+        String(err?.message || '').toLowerCase().includes('unauthorized-domain');
+      setIsDomainError(isDomain);
+      setError(
+        isDomain
+          ? `Domain belum diizinkan di Firebase Console. Salin domain di bawah dan tambahkan ke Firebase Console.`
+          : err.message || 'Gagal masuk dengan Akun Google.'
+      );
     } finally {
       setIsLoading(false);
     }
   };
+
+  const currentDomain = typeof window !== 'undefined' ? window.location.hostname : '';
 
   return (
     <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -98,9 +111,53 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onSuccess, onOpenPublicF
           <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-[11px] text-slate-600 leading-relaxed text-center">
             Perangkat lain yang masuk dengan username & password admin ini akan otomatis membuka <strong>data yang sama</strong> secara sinkron.
           </div>
+
           {error && (
-            <div className="p-3 text-xs bg-rose-50 border border-rose-200 text-rose-700 rounded-lg">
-              {error}
+            <div className="space-y-2">
+              <div className="p-3 text-xs bg-rose-50 border border-rose-200 text-rose-700 rounded-lg">
+                {error}
+              </div>
+
+              {isDomainError && (
+                <div className="p-3 bg-amber-50 border border-amber-300 rounded-xl space-y-2.5 text-xs text-amber-950">
+                  <div className="font-bold flex items-center gap-1.5 text-amber-900">
+                    <AlertCircle className="w-4 h-4 text-amber-600" />
+                    <span>Langkah Mudah Memperbaiki:</span>
+                  </div>
+
+                  <div className="p-2 bg-white rounded-lg border border-amber-200 flex items-center justify-between gap-2">
+                    <span className="font-mono text-[11px] font-bold text-slate-800 truncate select-all">
+                      {currentDomain}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(currentDomain);
+                        setCopiedDomain(true);
+                        setTimeout(() => setCopiedDomain(false), 3000);
+                      }}
+                      className="px-2 py-1 text-[11px] font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 rounded transition-colors flex items-center gap-1 cursor-pointer shrink-0"
+                    >
+                      {copiedDomain ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                      <span>{copiedDomain ? 'Tersalin' : 'Salin Domain'}</span>
+                    </button>
+                  </div>
+
+                  <p className="text-[11px] text-amber-800 leading-relaxed">
+                    1. Buka <strong>Firebase Console &gt; Authentication &gt; Settings &gt; Authorized domains</strong>.<br />
+                    2. Klik <strong>Add domain</strong>, tempel domain di atas, lalu klik <strong>Save</strong>.
+                  </p>
+
+                  <a
+                    href="https://console.firebase.google.com/project/gen-lang-client-0907905260/authentication/settings"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-center py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold text-xs shadow-xs"
+                  >
+                    Buka Firebase Console Settings ↗
+                  </a>
+                </div>
+              )}
             </div>
           )}
 
