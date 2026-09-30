@@ -27,19 +27,36 @@ export function exportAIReportToWord(report: GeneratedFinancialReport, customFil
     year: 'numeric'
   });
 
+  const leftLogo = (p.tampilkanLogoKiriKop !== false && p.logoUrl) ? p.logoUrl : '';
+  const rightLogo = (p.tampilkanLogoKananKop !== false && (p.logoKananUrl || p.logoUrl)) ? (p.logoKananUrl || p.logoUrl) : '';
+
   const kopHtml = `
-    <div style="text-align: center; margin-bottom: 20px; border-bottom: 3px double #059669; padding-bottom: 12px; font-family: 'Times New Roman', Times, serif;">
-      ${p.instansiInduk ? `<div style="font-size: 11pt; font-weight: bold; color: #475569; text-transform: uppercase; margin-bottom: 2px;">${p.instansiInduk.replace(/\n/g, '<br/>')}</div>` : ''}
-      <div style="font-size: 16pt; font-weight: bold; color: #0f172a; text-transform: uppercase; margin-bottom: 3px; letter-spacing: 0.5px;">
-        ${p.namaKoperasi || 'KOPERASI KONSUMEN "WARGA BAHAGIA"'}
-      </div>
-      <div style="font-size: 10pt; color: #334155; margin-bottom: 2px;">
-        ${p.badanHukum || 'Badan Hukum No. 19/BH/KWK/1998 · Tanggal 19 Mei 1998'}
-      </div>
-      <div style="font-size: 9.5pt; color: #475569;">
-        ${p.alamatKoperasi || 'Jl. Dago Asri No. 19 Bandung'} ${p.teleponKoperasi ? `| Telp: ${p.teleponKoperasi}` : ''} ${p.emailKoperasi ? `| Email: ${p.emailKoperasi}` : ''}
-      </div>
-    </div>
+    <table style="width: 100%; margin-bottom: 20px; border-bottom: 3px double #059669; padding-bottom: 12px; font-family: 'Times New Roman', Times, serif; border-collapse: collapse;" border="0">
+      <tr>
+        ${leftLogo ? `
+          <td style="width: 14%; text-align: left; vertical-align: middle; padding-right: 10px;">
+            <img src="${leftLogo}" width="70" height="70" style="width: 70px; height: 70px; object-fit: contain;" alt="Logo Koperasi" />
+          </td>
+        ` : '<td style="width: 5%;"></td>'}
+        <td style="width: ${leftLogo && rightLogo ? '72%' : leftLogo || rightLogo ? '81%' : '90%'}; text-align: center; vertical-align: middle;">
+          ${p.instansiInduk ? `<div style="font-size: 11pt; font-weight: bold; color: #475569; text-transform: uppercase; margin-bottom: 2px;">${p.instansiInduk.replace(/\n/g, '<br/>')}</div>` : ''}
+          <div style="font-size: 16pt; font-weight: bold; color: #0f172a; text-transform: uppercase; margin-bottom: 3px; letter-spacing: 0.5px;">
+            ${p.namaKoperasi || 'KOPERASI KONSUMEN "WARGA BAHAGIA"'}
+          </div>
+          <div style="font-size: 10pt; color: #334155; margin-bottom: 2px;">
+            ${p.badanHukum || 'Badan Hukum No. 19/BH/KWK/1998 · Tanggal 19 Mei 1998'}
+          </div>
+          <div style="font-size: 9.5pt; color: #475569;">
+            ${p.alamatKoperasi || 'Jl. Dago Asri No. 19 Bandung'} ${p.teleponKoperasi ? `| Telp: ${p.teleponKoperasi}` : ''} ${p.emailKoperasi ? `| Email: ${p.emailKoperasi}` : ''}
+          </div>
+        </td>
+        ${rightLogo ? `
+          <td style="width: 14%; text-align: right; vertical-align: middle; padding-left: 10px;">
+            <img src="${rightLogo}" width="70" height="70" style="width: 70px; height: 70px; object-fit: contain;" alt="Logo Koperasi" />
+          </td>
+        ` : '<td style="width: 5%;"></td>'}
+      </tr>
+    </table>
   `;
 
   const tandaTanganHtml = `

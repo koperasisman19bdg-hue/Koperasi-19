@@ -35,7 +35,15 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { StorageService, parseYearsFromPeriode } from '../utils/storage';
 import { exportAIReportToWord } from '../utils/exportWord';
-import { exportAIReportToPdf } from '../utils/exportPdf';
+import {
+  exportAIReportToPdf,
+  exportArusKasToPdf,
+  exportPerubahanEkuitasToPdf,
+  exportCALKToPdf,
+  exportRekonsiliasiToPdf,
+  exportPosisiKeuanganToPdf,
+  exportPHUToPdf
+} from '../utils/exportPdf';
 import {
   GeneratedFinancialReport,
   ArusKasReport,
@@ -557,15 +565,63 @@ export const MembuatLaporanAIPage: React.FC<MembuatLaporanAIPageProps> = ({ onDa
     }
   };
 
-  // Export 3 Laporan to PDF Resmi SAK EP (Penyajian Komparatif)
+  // 1. Export Gabungan Seluruh Laporan Keuangan SAK EP (Paket Lengkap 6 Laporan & Rekonsiliasi)
   const handleExportPDF = () => {
     if (!activeReport) return;
     try {
       exportAIReportToPdf(activeReport);
-      setSuccessMessage('Dokumen PDF 3 Laporan Keuangan Komparatif SAK EP Resmi berhasil diunduh!');
+      setSuccessMessage('Dokumen PDF Gabungan Lengkap 6 Laporan Keuangan SAK EP & Rekonsiliasi LPJ berhasil diunduh!');
     } catch (err) {
-      console.error('Error exporting PDF:', err);
-      setErrorMessage('Gagal mencetak / mengunduh PDF. Silakan coba lagi.');
+      console.error('Error exporting combined PDF:', err);
+      setErrorMessage('Gagal mencetak / mengunduh PDF Gabungan. Silakan coba lagi.');
+    }
+  };
+
+  // 2. Export Satuan: 1. Laporan Arus Kas PDF (Metode Langsung)
+  const handleExportArusKasPDF = () => {
+    if (!activeReport) return;
+    try {
+      exportArusKasToPdf(activeReport);
+      setSuccessMessage('Dokumen PDF Satuan: 1. Laporan Arus Kas (Metode Langsung SAK EP) berhasil diunduh!');
+    } catch (err) {
+      console.error('Error exporting Arus Kas PDF:', err);
+      setErrorMessage('Gagal mencetak PDF Arus Kas. Silakan coba lagi.');
+    }
+  };
+
+  // 3. Export Satuan: 2. Laporan Perubahan Ekuitas PDF (Modal Sendiri)
+  const handleExportEkuitasPDF = () => {
+    if (!activeReport) return;
+    try {
+      exportPerubahanEkuitasToPdf(activeReport);
+      setSuccessMessage('Dokumen PDF Satuan: 2. Laporan Perubahan Ekuitas (SAK EP Bab 6 & 22) berhasil diunduh!');
+    } catch (err) {
+      console.error('Error exporting Perubahan Ekuitas PDF:', err);
+      setErrorMessage('Gagal mencetak PDF Perubahan Ekuitas. Silakan coba lagi.');
+    }
+  };
+
+  // 4. Export Satuan: 3. Catatan Atas Laporan Keuangan (CALK) PDF
+  const handleExportCALKPDF = () => {
+    if (!activeReport) return;
+    try {
+      exportCALKToPdf(activeReport);
+      setSuccessMessage('Dokumen PDF Satuan: 3. Catatan Atas Laporan Keuangan (CALK SAK EP) berhasil diunduh!');
+    } catch (err) {
+      console.error('Error exporting CALK PDF:', err);
+      setErrorMessage('Gagal mencetak PDF CALK. Silakan coba lagi.');
+    }
+  };
+
+  // 5. Export Satuan: 4. Tabel Rekonsiliasi LPJ -> SAK EP PDF
+  const handleExportRekonsiliasiPDF = () => {
+    if (!activeReport) return;
+    try {
+      exportRekonsiliasiToPdf(activeReport);
+      setSuccessMessage('Dokumen PDF Satuan: Tabel Rekonsiliasi LPJ ke SAK EP berhasil diunduh!');
+    } catch (err) {
+      console.error('Error exporting Rekonsiliasi PDF:', err);
+      setErrorMessage('Gagal mencetak PDF Rekonsiliasi. Silakan coba lagi.');
     }
   };
 
@@ -842,35 +898,62 @@ export const MembuatLaporanAIPage: React.FC<MembuatLaporanAIPageProps> = ({ onDa
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
             {activeReport && (
               <>
                 <button
                   type="button"
-                  onClick={handleExportWord}
-                  className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer border border-blue-400/40"
-                  title="Unduh 3 Laporan Keuangan format Dokumen Microsoft Word"
+                  onClick={handleExportPDF}
+                  className="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold rounded-xl shadow-lg transition-all flex items-center gap-1.5 cursor-pointer"
+                  title="Cetak Seluruh Laporan Keuangan (Paket Lengkap 6 Lembar SAK EP & Rekonsiliasi LPJ)"
                 >
-                  <FileText className="w-4 h-4 text-blue-200" />
-                  <span>Unduh Word (.doc)</span>
+                  <Printer className="w-4 h-4" />
+                  <span>📄 Cetak Gabungan PDF</span>
                 </button>
                 <button
                   type="button"
-                  onClick={handleExportPDF}
-                  className="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer"
-                  title="Cetak atau Unduh Dokumen PDF Resmi Lengkap dengan Kop dan Tanda Tangan"
+                  onClick={handleExportArusKasPDF}
+                  className="px-3 py-2 bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 border border-emerald-400/30 text-xs font-bold rounded-xl transition-all flex items-center gap-1 cursor-pointer"
+                  title="Cetak Satuan: 1. Laporan Arus Kas (Metode Langsung)"
                 >
-                  <Printer className="w-4 h-4" />
-                  <span>Unduh / Cetak PDF</span>
+                  <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>1. Arus Kas</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExportEkuitasPDF}
+                  className="px-3 py-2 bg-teal-900/80 hover:bg-teal-800 text-teal-200 border border-teal-400/30 text-xs font-bold rounded-xl transition-all flex items-center gap-1 cursor-pointer"
+                  title="Cetak Satuan: 2. Laporan Perubahan Ekuitas"
+                >
+                  <TrendingUp className="w-3.5 h-3.5 text-teal-400" />
+                  <span>2. Ekuitas</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExportCALKPDF}
+                  className="px-3 py-2 bg-indigo-900/80 hover:bg-indigo-800 text-indigo-200 border border-indigo-400/30 text-xs font-bold rounded-xl transition-all flex items-center gap-1 cursor-pointer"
+                  title="Cetak Satuan: 3. Catatan Atas Laporan Keuangan (CALK)"
+                >
+                  <FileText className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>3. CALK</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExportWord}
+                  className="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl shadow-lg transition-all flex items-center gap-1.5 cursor-pointer border border-blue-400/40"
+                  title="Unduh 3 Laporan Keuangan format Dokumen Microsoft Word"
+                >
+                  <FileText className="w-3.5 h-3.5 text-blue-200" />
+                  <span>Word (.doc)</span>
                 </button>
                 <button
                   type="button"
                   onClick={handleExportExcel}
-                  className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold rounded-xl transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-3 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
                   title="Unduh Buku Kerja Excel dengan 3 Lembar Kerja SAK EP"
                 >
-                  <FileSpreadsheet className="w-4 h-4 text-emerald-300" />
-                  <span>Ekspor Excel (.xlsx)</span>
+                  <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-300" />
+                  <span>Excel (.xlsx)</span>
                 </button>
               </>
             )}
@@ -1128,36 +1211,67 @@ export const MembuatLaporanAIPage: React.FC<MembuatLaporanAIPageProps> = ({ onDa
               </span>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[11px] text-slate-400 hidden md:inline">Unduh Hasil Laporan:</span>
-              <button
-                type="button"
-                onClick={handleExportWord}
-                className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer border border-blue-400/40"
-                title="Unduh 3 Laporan Keuangan format Word (.doc)"
-              >
-                <FileText className="w-3.5 h-3.5 text-blue-200" />
-                <span>Word (.doc)</span>
-              </button>
-
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <span className="text-[11px] text-slate-400 hidden lg:inline">Cetak Dokumen:</span>
+              
               <button
                 type="button"
                 onClick={handleExportPDF}
                 className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer border border-emerald-400/40"
-                title="Unduh Dokumen PDF Resmi Lengkap dengan Kop & Tanda Tangan"
+                title="Cetak Seluruh Laporan Keuangan (Gabungan 6 Lembar SAK EP & Rekonsiliasi)"
               >
                 <Printer className="w-3.5 h-3.5 text-emerald-200" />
-                <span>PDF Resmi</span>
+                <span>📄 PDF Gabungan</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleExportArusKasPDF}
+                className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-emerald-300 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1 shadow-xs cursor-pointer border border-emerald-500/30"
+                title="Cetak Satuan: 1. Laporan Arus Kas (Metode Langsung)"
+              >
+                <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
+                <span>1. Arus Kas</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleExportEkuitasPDF}
+                className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-teal-300 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1 shadow-xs cursor-pointer border border-teal-500/30"
+                title="Cetak Satuan: 2. Laporan Perubahan Ekuitas"
+              >
+                <TrendingUp className="w-3.5 h-3.5 text-teal-400" />
+                <span>2. Ekuitas</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleExportCALKPDF}
+                className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-indigo-300 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1 shadow-xs cursor-pointer border border-indigo-500/30"
+                title="Cetak Satuan: 3. Catatan Atas Laporan Keuangan (CALK)"
+              >
+                <FileText className="w-3.5 h-3.5 text-indigo-400" />
+                <span>3. CALK</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleExportWord}
+                className="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition-colors flex items-center gap-1 shadow-xs cursor-pointer border border-blue-400/40"
+                title="Unduh 3 Laporan Keuangan format Word (.doc)"
+              >
+                <FileText className="w-3.5 h-3.5 text-blue-200" />
+                <span>Word</span>
               </button>
 
               <button
                 type="button"
                 onClick={handleExportExcel}
-                className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer border border-slate-600"
+                className="px-2.5 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-bold transition-colors flex items-center gap-1 shadow-xs cursor-pointer border border-slate-600"
                 title="Unduh Spreadsheet Excel (.xlsx)"
               >
                 <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-300" />
-                <span>Excel (.xlsx)</span>
+                <span>Excel</span>
               </button>
             </div>
           </div>
@@ -1263,9 +1377,29 @@ export const MembuatLaporanAIPage: React.FC<MembuatLaporanAIPageProps> = ({ onDa
                     Penyelarasan Komparatif 15 Pos Keuangan Utama · 100% Selaras & Terkunci Sempurna
                   </p>
                 </div>
-                <div className="px-3 py-1 bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-bold rounded-lg flex items-center gap-1.5 shadow-2xs">
-                  <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>100% Cocok Tanpa Selisih</span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="px-3 py-1 bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-bold rounded-lg flex items-center gap-1.5 shadow-2xs">
+                    <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>100% Cocok</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleExportRekonsiliasiPDF}
+                    className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 cursor-pointer shadow-xs"
+                    title="Cetak PDF Satuan Tabel Rekonsiliasi"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>Cetak PDF Rekonsiliasi</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleExportPDF}
+                    className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg flex items-center gap-1.5 cursor-pointer border border-slate-300"
+                    title="Cetak PDF Gabungan Lengkap Seluruh Laporan"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>📄 Cetak Gabungan</span>
+                  </button>
                 </div>
               </div>
 
@@ -1435,6 +1569,93 @@ export const MembuatLaporanAIPage: React.FC<MembuatLaporanAIPageProps> = ({ onDa
                 </div>
               </div>
 
+              {/* Quick Print Center Card */}
+              <div className="p-5 rounded-2xl bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white space-y-3 shadow-sm border border-emerald-500/30">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 font-bold text-emerald-300 text-xs uppercase tracking-wider">
+                    <Printer className="w-4 h-4 text-emerald-400" />
+                    <span>Pusat Cetak Dokumen PDF Resmi (Satuan & Gabungan SAK EP)</span>
+                  </div>
+                  <span className="text-[11px] text-emerald-200/80">Kop Surat & Tanda Tangan Resmi Otomatis Terpasang</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+                  <button
+                    type="button"
+                    onClick={handleExportArusKasPDF}
+                    className="p-3 bg-white/10 hover:bg-white/20 border border-emerald-400/30 rounded-xl text-left transition-all cursor-pointer flex flex-col justify-between space-y-2 group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-emerald-300 uppercase">Satuan #1</span>
+                      <DollarSign className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-white">Laporan Arus Kas</div>
+                      <div className="text-[10px] text-slate-300">Metode Langsung (SAK EP Bab 7)</div>
+                    </div>
+                    <div className="text-[10px] font-semibold text-emerald-300 flex items-center gap-1 pt-1 border-t border-white/10">
+                      <Printer className="w-3 h-3" />
+                      <span>Cetak PDF Satuan</span>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleExportEkuitasPDF}
+                    className="p-3 bg-white/10 hover:bg-white/20 border border-teal-400/30 rounded-xl text-left transition-all cursor-pointer flex flex-col justify-between space-y-2 group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-teal-300 uppercase">Satuan #2</span>
+                      <TrendingUp className="w-4 h-4 text-teal-400 group-hover:scale-110 transition-transform" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-white">Laporan Perubahan Ekuitas</div>
+                      <div className="text-[10px] text-slate-300">Modal Sendiri (SAK EP Bab 6)</div>
+                    </div>
+                    <div className="text-[10px] font-semibold text-teal-300 flex items-center gap-1 pt-1 border-t border-white/10">
+                      <Printer className="w-3 h-3" />
+                      <span>Cetak PDF Satuan</span>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleExportCALKPDF}
+                    className="p-3 bg-white/10 hover:bg-white/20 border border-indigo-400/30 rounded-xl text-left transition-all cursor-pointer flex flex-col justify-between space-y-2 group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-indigo-300 uppercase">Satuan #3</span>
+                      <FileText className="w-4 h-4 text-indigo-400 group-hover:scale-110 transition-transform" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-white">Laporan CALK Lengkap</div>
+                      <div className="text-[10px] text-slate-300">Catatan & Rasio (SAK EP Bab 8)</div>
+                    </div>
+                    <div className="text-[10px] font-semibold text-indigo-300 flex items-center gap-1 pt-1 border-t border-white/10">
+                      <Printer className="w-3 h-3" />
+                      <span>Cetak PDF Satuan</span>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleExportPDF}
+                    className="p-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl text-left transition-all cursor-pointer flex flex-col justify-between space-y-2 shadow-md group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-extrabold uppercase bg-slate-950 text-emerald-300 px-1.5 py-0.5 rounded">Paket Komplit</span>
+                      <Printer className="w-4 h-4 text-slate-950 group-hover:scale-110 transition-transform" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-black text-slate-950">Gabungan 6 Laporan</div>
+                      <div className="text-[10px] text-emerald-950 font-medium">SAK EP + Rekonsiliasi LPJ</div>
+                    </div>
+                    <div className="text-[10px] font-bold text-slate-900 flex items-center gap-1 pt-1 border-t border-emerald-600/30">
+                      <span>📄 Unduh / Cetak Semua</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
               {/* Strategic Recommendations Card */}
               <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
                 <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
@@ -1462,21 +1683,34 @@ export const MembuatLaporanAIPage: React.FC<MembuatLaporanAIPageProps> = ({ onDa
             <div className="p-6 space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
                 <div>
-                  <h3 className="text-base font-bold text-slate-900">
+                  <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <DollarSign className="w-5 h-5 text-emerald-600" />
                     1. LAPORAN ARUS KAS (STATEMENT OF CASH FLOWS)
                   </h3>
                   <p className="text-xs text-slate-500">
                     Metode Langsung · Periode {activeReport.arusKas.periode} · SAK EP Komparatif ({activeReport.arusKas.tahunBerjalan || parseYearsFromPeriode(activeReport.periode).thBerjalan} vs {activeReport.arusKas.tahunSebelumnya || parseYearsFromPeriode(activeReport.periode).thLalu})
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleExportPDF}
-                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 self-start cursor-pointer shadow-xs"
-                >
-                  <Printer className="w-3.5 h-3.5" />
-                  <span>Cetak PDF Resmi</span>
-                </button>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleExportArusKasPDF}
+                    className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 cursor-pointer shadow-xs"
+                    title="Cetak PDF Satuan: 1. Laporan Arus Kas (Metode Langsung)"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>Cetak PDF Arus Kas (Satuan)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleExportPDF}
+                    className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg flex items-center gap-1.5 cursor-pointer border border-slate-300"
+                    title="Cetak PDF Gabungan Seluruh Laporan SAK EP"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>📄 Cetak Gabungan</span>
+                  </button>
+                </div>
               </div>
 
               {/* Table Arus Kas Komparatif */}
@@ -1610,21 +1844,34 @@ export const MembuatLaporanAIPage: React.FC<MembuatLaporanAIPageProps> = ({ onDa
             <div className="p-6 space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
                 <div>
-                  <h3 className="text-base font-bold text-slate-900">
+                  <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5 text-teal-600" />
                     2. LAPORAN PERUBAHAN EKUITAS (MODAL SENDIRI KOPERASI)
                   </h3>
                   <p className="text-xs text-slate-500">
                     Periode {activeReport.perubahanEkuitas.periode} · SAK EP Bab 6 Komparatif ({activeReport.perubahanEkuitas.tahunBerjalan || parseYearsFromPeriode(activeReport.periode).thBerjalan} vs {activeReport.perubahanEkuitas.tahunSebelumnya || parseYearsFromPeriode(activeReport.periode).thLalu})
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleExportPDF}
-                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 self-start cursor-pointer shadow-xs"
-                >
-                  <Printer className="w-3.5 h-3.5" />
-                  <span>Cetak PDF Resmi</span>
-                </button>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleExportEkuitasPDF}
+                    className="px-3.5 py-1.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 cursor-pointer shadow-xs"
+                    title="Cetak PDF Satuan: 2. Laporan Perubahan Ekuitas"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>Cetak PDF Ekuitas (Satuan)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleExportPDF}
+                    className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg flex items-center gap-1.5 cursor-pointer border border-slate-300"
+                    title="Cetak PDF Gabungan Seluruh Laporan SAK EP"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>📄 Cetak Gabungan</span>
+                  </button>
+                </div>
               </div>
 
               {/* Table Perubahan Ekuitas Komparatif */}
@@ -1699,21 +1946,34 @@ export const MembuatLaporanAIPage: React.FC<MembuatLaporanAIPageProps> = ({ onDa
             <div className="p-6 space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
                 <div>
-                  <h3 className="text-base font-bold text-slate-900">
+                  <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-indigo-600" />
                     3. CATATAN ATAS LAPORAN KEUANGAN (CALK)
                   </h3>
                   <p className="text-xs text-slate-500">
                     Dokumen Kelengkapan Laporan Pertanggungjawaban RAT · {activeReport.calk.periode}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleExportPDF}
-                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 self-start cursor-pointer"
-                >
-                  <Printer className="w-3.5 h-3.5" />
-                  <span>Cetak CALK</span>
-                </button>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleExportCALKPDF}
+                    className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg flex items-center gap-1.5 cursor-pointer shadow-xs"
+                    title="Cetak PDF Satuan: 3. Catatan Atas Laporan Keuangan (CALK)"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>Cetak PDF CALK (Satuan)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleExportPDF}
+                    className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg flex items-center gap-1.5 cursor-pointer border border-slate-300"
+                    title="Cetak PDF Gabungan Seluruh Laporan SAK EP"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>📄 Cetak Gabungan</span>
+                  </button>
+                </div>
               </div>
 
               {/* CALK Section 1 */}
