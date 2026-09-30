@@ -247,6 +247,10 @@ export const MembuatLaporanAIPage: React.FC<MembuatLaporanAIPageProps> = ({ onDa
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [successMessage, setSuccessMessage] = useState<string>('');
 
+  // Modal Konfirmasi Hapus Laporan
+  const [deleteReportTarget, setDeleteReportTarget] = useState<GeneratedFinancialReport | 'all' | null>(null);
+  const [isDeletingReport, setIsDeletingReport] = useState(false);
+
   // Active Output SubTab (Menu Posisi Keuangan dan PHU dipindahkan ke Fitur 6. Upload Laporan)
   const [activeOutputTab, setActiveOutputTab] = useState<'aruskas' | 'ekuitas' | 'calk' | 'rekonsiliasi' | 'ringkasan' | 'riwayat'>('aruskas');
 
@@ -622,6 +626,35 @@ export const MembuatLaporanAIPage: React.FC<MembuatLaporanAIPageProps> = ({ onDa
     } catch (err) {
       console.error('Error exporting Rekonsiliasi PDF:', err);
       setErrorMessage('Gagal mencetak PDF Rekonsiliasi. Silakan coba lagi.');
+    }
+  };
+
+  // Handler Konfirmasi Hapus Riwayat Laporan (Satuan atau Semua)
+  const handleConfirmDeleteReport = () => {
+    if (!deleteReportTarget) return;
+    setIsDeletingReport(true);
+
+    try {
+      if (deleteReportTarget === 'all') {
+        StorageService.saveAIReports([]);
+        setReportsHistory([]);
+        setActiveReport(null);
+        setSuccessMessage('Seluruh riwayat laporan AI telah berhasil dibersihkan.');
+      } else {
+        const toDelete = deleteReportTarget;
+        StorageService.deleteAIReport(toDelete.id);
+        const nextList = reportsHistory.filter(r => String(r.id) !== String(toDelete.id));
+        setReportsHistory(nextList);
+        if (activeReport?.id === toDelete.id) {
+          setActiveReport(nextList.length > 0 ? nextList[0] : null);
+        }
+        setSuccessMessage(`Arsip laporan "${toDelete.periode}" telah berhasil dihapus.`);
+      }
+    } catch (e: any) {
+      setErrorMessage(e.message || 'Gagal menghapus laporan.');
+    } finally {
+      setIsDeletingReport(false);
+      setDeleteReportTarget(null);
     }
   };
 
@@ -2075,14 +2108,7 @@ export const MembuatLaporanAIPage: React.FC<MembuatLaporanAIPageProps> = ({ onDa
                 {reportsHistory.length > 0 && (
                   <button
                     type="button"
-                    onClick={() => {
-                      if (window.confirm('Apakah Anda yakin ingin menghapus SELURUH riwayat laporan AI yang pernah dibuat? Tindakan ini tidak dapat dibatalkan.')) {
-                        StorageService.saveAIReports([]);
-                        setReportsHistory([]);
-                        setActiveReport(null);
-                        setSuccessMessage('Seluruh riwayat laporan AI telah berhasil dibersihkan.');
-                      }
-                    }}
+                    onClick={() => setDeleteReportTarget('all')}
                     className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold rounded-xl flex items-center gap-1.5 cursor-pointer transition-colors self-start sm:self-auto"
                   >
                     <Trash2 className="w-3.5 h-3.5 text-rose-600" />
@@ -2155,18 +2181,10 @@ export const MembuatLaporanAIPage: React.FC<MembuatLaporanAIPageProps> = ({ onDa
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              if (window.confirm(`Apakah Anda yakin ingin menghapus arsip laporan "${rep.periode}"?`)) {
-                                StorageService.deleteAIReport(rep.id);
-                                const nextList = reportsHistory.filter(r => r.id !== rep.id);
-                                setReportsHistory(nextList);
-                                if (activeReport?.id === rep.id) {
-                                  setActiveReport(nextList.length > 0 ? nextList[0] : null);
-                                }
-                                setSuccessMessage(`Arsip laporan "${rep.periode}" telah berhasil dihapus.`);
-                              }
+                              setDeleteReportTarget(rep);
                             }}
                             className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                            title="Hapus Laporan"
+                            title="Hapus Laporan Ini"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -2186,6 +2204,73 @@ export const MembuatLaporanAIPage: React.FC<MembuatLaporanAIPageProps> = ({ onDa
           <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
             Seluruh riwayat laporan telah dibersihkan. Pilih sumber data di atas dan klik tombol <strong>"Buat Laporan Keuangan SAK EP (AI Auto)"</strong> untuk menghasilkan laporan baru.
           </p>
+        </div>
+      )}
+
+      {/* MODAL KONFIRMASI HAPUS RIWAYAT LAPORAN */}
+      {deleteReportTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-200">
+            <div className="p-6 space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto shadow-inner">
+                <Trash2 className="w-6 h-6" />
+              </div>
+
+              <div className="text-center space-y-1.5">
+                <h3 className="text-base font-bold text-slate-900">
+                  {deleteReportTarget === 'all'
+                    ? 'Konfirmasi Hapus Seluruh Riwayat Laporan'
+                    : 'Konfirmasi Hapus Laporan Keuangan'}
+                </h3>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  {deleteReportTarget === 'all'
+                    ? 'Apakah Anda yakin ingin menghapus SELURUH riwayat laporan keuangan yang tersimpan? Tindakan ini permanen.'
+                    : `Apakah Anda yakin ingin menghapus arsip laporan "${deleteReportTarget.periode}"?`}
+                </p>
+              </div>
+
+              {deleteReportTarget !== 'all' && (
+                <div className="p-4 bg-slate-50 border border-slate-200/80 rounded-2xl text-xs space-y-1.5 text-slate-700">
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Periode:</span>
+                    <span className="font-bold text-slate-900">{deleteReportTarget.periode}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Tanggal Dibuat:</span>
+                    <span className="font-mono text-slate-700">{new Date(deleteReportTarget.tanggalDibuat).toLocaleDateString('id-ID')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Saldo Kas & Bank:</span>
+                    <span className="font-mono font-bold text-emerald-700">{formatRupiah(deleteReportTarget.arusKas?.saldoKasAkhir || 0)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Total Ekuitas:</span>
+                    <span className="font-mono font-bold text-teal-700">{formatRupiah(deleteReportTarget.perubahanEkuitas?.totalEkuitasAkhir || 0)}</span>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center justify-end gap-2.5 pt-2">
+                <button
+                  type="button"
+                  disabled={isDeletingReport}
+                  onClick={() => setDeleteReportTarget(null)}
+                  className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  disabled={isDeletingReport}
+                  onClick={handleConfirmDeleteReport}
+                  className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>{isDeletingReport ? 'Menghapus...' : deleteReportTarget === 'all' ? 'Ya, Hapus Semua' : 'Ya, Hapus Laporan'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

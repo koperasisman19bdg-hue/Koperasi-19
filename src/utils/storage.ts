@@ -1850,17 +1850,19 @@ export const StorageService = {
   },
   saveAIReports(data: GeneratedFinancialReport[]): void {
     setToStorage(KEYS.AI_REPORTS, data, false);
+    syncToServer(KEYS.AI_REPORTS, data, false, true);
     setTimeout(() => {
       window.dispatchEvent(new Event('kwb-ai-reports-changed'));
+      window.dispatchEvent(new Event('kwb-data-changed'));
     }, 0);
   },
   addAIReport(report: GeneratedFinancialReport): void {
     const list = this.getAIReports();
-    const updated = [report, ...list.filter(r => r.id !== report.id)];
+    const updated = [report, ...list.filter(r => String(r.id) !== String(report.id))];
     this.saveAIReports(updated);
   },
   deleteAIReport(id: string): void {
-    const list = this.getAIReports().filter(r => r.id !== id);
+    const list = this.getAIReports().filter(r => String(r.id) !== String(id));
     this.saveAIReports(list);
   },
 
