@@ -1,0 +1,6 @@
+{
+  "name": "Koperasi Warga Bahagia",
+  "description": "Sistem Informasi Manajemen Koperasi Warga Bahagia: Data Keanggotaan, E-KTA, Jurnal Umum, Simpanan, Peminjaman Uang & Barang, serta Pembukuan Pertokoan & Seragam.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
