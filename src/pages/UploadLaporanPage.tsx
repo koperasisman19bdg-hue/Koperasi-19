@@ -72,10 +72,14 @@ export const UploadLaporanPage: React.FC = () => {
 
     window.addEventListener('kwb-uploaded-posisi-changed', handlePosisiUpdate);
     window.addEventListener('kwb-uploaded-phu-changed', handlePhuUpdate);
+    window.addEventListener('kwb-data-changed', handlePosisiUpdate);
+    window.addEventListener('kwb-data-changed', handlePhuUpdate);
 
     return () => {
       window.removeEventListener('kwb-uploaded-posisi-changed', handlePosisiUpdate);
       window.removeEventListener('kwb-uploaded-phu-changed', handlePhuUpdate);
+      window.removeEventListener('kwb-data-changed', handlePosisiUpdate);
+      window.removeEventListener('kwb-data-changed', handlePhuUpdate);
     };
   }, []);
 

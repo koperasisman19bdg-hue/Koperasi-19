@@ -481,6 +481,9 @@ function syncToServer(key: string, data: any, isBootstrap: boolean = false) {
         window.dispatchEvent(new Event('kwb-data-changed'));
         window.dispatchEvent(new Event('koperasi-data-changed'));
         window.dispatchEvent(new Event('kwb-pengaturan-changed'));
+        window.dispatchEvent(new Event('kwb-uploaded-posisi-changed'));
+        window.dispatchEvent(new Event('kwb-uploaded-phu-changed'));
+        window.dispatchEvent(new Event('kwb-ai-reports-changed'));
       }
 
       // Process any lingering offline items if available
@@ -556,6 +559,15 @@ function syncToServer(key: string, data: any, isBootstrap: boolean = false) {
           if (payload.key === 'pengaturan') {
             window.dispatchEvent(new Event('kwb-pengaturan-changed'));
           }
+          if (payload.key === 'uploadedPosisiKeuangan') {
+            window.dispatchEvent(new Event('kwb-uploaded-posisi-changed'));
+          }
+          if (payload.key === 'uploadedPHU') {
+            window.dispatchEvent(new Event('kwb-uploaded-phu-changed'));
+          }
+          if (payload.key === 'aiReports') {
+            window.dispatchEvent(new Event('kwb-ai-reports-changed'));
+          }
 
           // Dispatch visual notification event for multi-user collaboration
           window.dispatchEvent(new CustomEvent('kwb-remote-change', {
@@ -591,6 +603,9 @@ function syncToServer(key: string, data: any, isBootstrap: boolean = false) {
           window.dispatchEvent(new Event('kwb-data-changed'));
           window.dispatchEvent(new Event('koperasi-data-changed'));
           window.dispatchEvent(new Event('kwb-pengaturan-changed'));
+          window.dispatchEvent(new Event('kwb-uploaded-posisi-changed'));
+          window.dispatchEvent(new Event('kwb-uploaded-phu-changed'));
+          window.dispatchEvent(new Event('kwb-ai-reports-changed'));
         } catch (err) {
           console.warn('[Sync] Error applying realtime batch update:', err);
         }
@@ -634,6 +649,9 @@ function syncToServer(key: string, data: any, isBootstrap: boolean = false) {
             window.dispatchEvent(new Event('kwb-data-changed'));
             window.dispatchEvent(new Event('koperasi-data-changed'));
             window.dispatchEvent(new Event('kwb-pengaturan-changed'));
+            window.dispatchEvent(new Event('kwb-uploaded-posisi-changed'));
+            window.dispatchEvent(new Event('kwb-uploaded-phu-changed'));
+            window.dispatchEvent(new Event('kwb-ai-reports-changed'));
           }
         } catch (err) {
           isReceivingServerUpdate = false;
@@ -1196,6 +1214,60 @@ export const StorageService = {
   logout(): void {
     localStorage.removeItem(KEYS.AUTH);
     window.dispatchEvent(new Event('kwb-auth-changed'));
+  },
+
+  // Unified Centralized Single-Admin Authentication across all devices
+  async authenticateAdmin(username: string, password: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      // 1. Attempt central server verification
+      const res = await fetchWithTimeout(getApiUrl('/api/login'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      }, 7000);
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        // Adopt the entire server database snapshot into local storage immediately
+        if (data.database) {
+          isReceivingServerUpdate = true;
+          Object.entries(SERVER_TO_KEY_MAP).forEach(([serverKey, localKey]) => {
+            const serverData = data.database[serverKey];
+            if (serverData !== undefined) {
+              localStorage.setItem(localKey, JSON.stringify(serverData));
+            }
+          });
+          isReceivingServerUpdate = false;
+        }
+
+        this.login();
+
+        // Trigger comprehensive re-render across all application modules
+        window.dispatchEvent(new Event('kwb-data-changed'));
+        window.dispatchEvent(new Event('koperasi-data-changed'));
+        window.dispatchEvent(new Event('kwb-pengaturan-changed'));
+        window.dispatchEvent(new Event('kwb-uploaded-posisi-changed'));
+        window.dispatchEvent(new Event('kwb-uploaded-phu-changed'));
+        window.dispatchEvent(new Event('kwb-ai-reports-changed'));
+
+        return { success: true };
+      } else {
+        return { success: false, error: data.error || 'Username atau Password salah!' };
+      }
+    } catch (err) {
+      console.warn('[Auth] Server login request failed/offline, checking local credentials fallback:', err);
+      // Fallback for complete offline state
+      const localPengaturan = this.getPengaturan();
+      const validUser = (localPengaturan.username || 'Warga Bahagia').trim();
+      const validPass = String(localPengaturan.password || '19').trim();
+
+      if (username.trim().toLowerCase() === validUser.toLowerCase() && password.trim() === validPass) {
+        this.login();
+        return { success: true };
+      }
+      return { success: false, error: 'Username atau Password salah (atau koneksi ke server belum stabil).' };
+    }
   },
 
   // Anggota
@@ -1922,6 +1994,9 @@ export const StorageService = {
         window.dispatchEvent(new Event('kwb-data-changed'));
         window.dispatchEvent(new Event('koperasi-data-changed'));
         window.dispatchEvent(new Event('kwb-pengaturan-changed'));
+        window.dispatchEvent(new Event('kwb-uploaded-posisi-changed'));
+        window.dispatchEvent(new Event('kwb-uploaded-phu-changed'));
+        window.dispatchEvent(new Event('kwb-ai-reports-changed'));
       }
 
       // Process any remaining offline queue items

@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import compression from 'compression';
 import { GoogleGenAI } from '@google/genai';
+import { INITIAL_POSISI_KEUANGAN_LPJ, INITIAL_PHU_LPJ } from './src/data/initialUploadedReports';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,6 +33,9 @@ const DEFAULT_DATABASE = {
   pengajuan: [],
   toko: [],
   seragam: [],
+  uploadedPosisiKeuangan: INITIAL_POSISI_KEUANGAN_LPJ,
+  uploadedPHU: INITIAL_PHU_LPJ,
+  aiReports: [],
   pengaturan: {
     username: 'Warga Bahagia',
     password: '19',
@@ -76,7 +80,14 @@ function readDatabase() {
     }
     const raw = fs.readFileSync(DB_FILE, 'utf-8');
     const parsed = JSON.parse(raw);
-    return { ...DEFAULT_DATABASE, ...parsed };
+    const db = { ...DEFAULT_DATABASE, ...parsed };
+    if (!db.uploadedPosisiKeuangan) {
+      db.uploadedPosisiKeuangan = INITIAL_POSISI_KEUANGAN_LPJ;
+    }
+    if (!db.uploadedPHU) {
+      db.uploadedPHU = INITIAL_PHU_LPJ;
+    }
+    return db;
   } catch (error) {
     console.error('Error reading database file, attempting backup recovery:', error);
     try {
@@ -284,6 +295,44 @@ app.post('/api/database', (req: Request, res: Response) => {
     });
 
     res.json({ success: true, data: saved });
+  } catch (error) {
+    res.status(500).json({ success: false, error: String(error) });
+  }
+});
+
+// API: Unified Single-Admin Central Authentication & Initial Device Snapshot
+app.post('/api/login', (req: Request, res: Response) => {
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ success: false, error: 'Username dan Password wajib diisi' });
+    }
+
+    const db = readDatabase();
+    const serverPengaturan = db.pengaturan || {};
+    const validUsername = (serverPengaturan.username || 'Warga Bahagia').trim();
+    const validPassword = String(serverPengaturan.password || '19').trim();
+
+    const inputUser = String(username).trim();
+    const inputPass = String(password).trim();
+
+    if (inputUser.toLowerCase() === validUsername.toLowerCase() && inputPass === validPassword) {
+      return res.json({
+        success: true,
+        message: 'Login berhasil sebagai Admin Koperasi',
+        admin: {
+          username: validUsername,
+          namaAdmin: serverPengaturan.namaAdmin || 'Pengurus Koperasi',
+          namaKoperasi: serverPengaturan.namaKoperasi || 'Koperasi Warga Bahagia'
+        },
+        database: db
+      });
+    } else {
+      return res.status(401).json({
+        success: false,
+        error: 'Username atau Password salah! Pastikan data sesuai dengan yang terdaftar di Pengaturan Akun Admin.'
+      });
+    }
   } catch (error) {
     res.status(500).json({ success: false, error: String(error) });
   }

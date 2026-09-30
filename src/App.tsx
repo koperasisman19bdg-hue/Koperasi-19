@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { StorageService } from './utils/storage';
+import { initDriveAuth } from './services/googleDriveService';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { LoginModal } from './components/LoginModal';
@@ -111,12 +112,15 @@ export default function App() {
     document.addEventListener('visibilitychange', handleVisibilityOrFocus);
     window.addEventListener('focus', handleVisibilityOrFocus);
 
+    const unsubscribeDrive = initDriveAuth();
+
     return () => {
       window.removeEventListener('kwb-data-changed', handleDataChanged);
       window.removeEventListener('kwb-auth-changed', handleAuthChanged);
       window.removeEventListener('kwb-pengaturan-changed', handlePengaturanChanged);
       document.removeEventListener('visibilitychange', handleVisibilityOrFocus);
       window.removeEventListener('focus', handleVisibilityOrFocus);
+      if (unsubscribeDrive) unsubscribeDrive();
     };
   }, [loadAllData]);
 

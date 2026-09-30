@@ -22,6 +22,8 @@ import {
 } from 'lucide-react';
 import { PengajuanPinjaman } from '../types';
 import { StorageService } from '../utils/storage';
+import { getDriveSyncStatus, DriveSyncStatus } from '../services/googleDriveService';
+import { GoogleDriveModal } from './GoogleDriveModal';
 
 interface HeaderProps {
   currentTabName: string;
@@ -56,6 +58,8 @@ export const Header: React.FC<HeaderProps> = ({
   const [syncStatus, setSyncStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [networkInfo, setNetworkInfo] = useState(() => StorageService.getNetworkStatus());
   const [onlineUsers, setOnlineUsers] = useState<number>(() => StorageService.getOnlineUsersCount());
+  const [driveStatus, setDriveStatus] = useState<DriveSyncStatus>(() => getDriveSyncStatus());
+  const [isDriveModalOpen, setIsDriveModalOpen] = useState(false);
   
   // Realtime floating notification when other operators input/edit data
   const [remoteUpdateToast, setRemoteUpdateToast] = useState<{
@@ -64,6 +68,13 @@ export const Header: React.FC<HeaderProps> = ({
   } | null>(null);
 
   useEffect(() => {
+    const handleDriveChange = (e: any) => {
+      if (e.detail) {
+        setDriveStatus(e.detail);
+      } else {
+        setDriveStatus(getDriveSyncStatus());
+      }
+    };
     const handleNetworkChange = () => {
       const net = StorageService.getNetworkStatus();
       setNetworkInfo(net);
@@ -95,6 +106,7 @@ export const Header: React.FC<HeaderProps> = ({
     window.addEventListener('kwb-network-status-changed', handleNetworkChange);
     window.addEventListener('kwb-presence-changed', handlePresenceChange);
     window.addEventListener('kwb-remote-change', handleRemoteChange);
+    window.addEventListener('kwb-drive-status-changed', handleDriveChange);
     window.addEventListener('online', handleNetworkChange);
     window.addEventListener('offline', handleNetworkChange);
 
@@ -104,6 +116,7 @@ export const Header: React.FC<HeaderProps> = ({
       window.removeEventListener('kwb-network-status-changed', handleNetworkChange);
       window.removeEventListener('kwb-presence-changed', handlePresenceChange);
       window.removeEventListener('kwb-remote-change', handleRemoteChange);
+      window.removeEventListener('kwb-drive-status-changed', handleDriveChange);
       window.removeEventListener('online', handleNetworkChange);
       window.removeEventListener('offline', handleNetworkChange);
       clearInterval(interval);
@@ -231,6 +244,31 @@ export const Header: React.FC<HeaderProps> = ({
             {onlineUsers} <span className="hidden lg:inline font-semibold">Online</span>
           </span>
         </div>
+
+        {/* Google Drive Master Database Button */}
+        <button
+          onClick={() => setIsDriveModalOpen(true)}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${
+            driveStatus.isConnected
+              ? 'bg-blue-50 text-blue-800 border-blue-200 hover:bg-blue-100'
+              : 'bg-white text-slate-700 hover:text-blue-700 hover:bg-blue-50 border-slate-200'
+          }`}
+          title={
+            driveStatus.isConnected
+              ? `Google Drive Aktif (${driveStatus.user?.email || 'Terhubung'}) · Klik untuk mengelola`
+              : 'Hubungkan ke Google Drive untuk sinkronisasi multi-perangkat'
+          }
+        >
+          <Cloud className={`w-3.5 h-3.5 ${driveStatus.isConnected ? 'text-blue-600' : 'text-slate-400'}`} />
+          <span className="text-[11px] sm:text-xs flex items-center gap-1">
+            <span className="hidden sm:inline">Google Drive</span>
+            {driveStatus.isConnected ? (
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+            ) : (
+              <span className="text-[10px] text-blue-600 font-normal hidden md:inline">(Sambungkan)</span>
+            )}
+          </span>
+        </button>
 
         {/* Real-time Cloud Sync Button */}
         <button
@@ -469,6 +507,12 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         )}
       </div>
+
+      {/* Google Drive Master Database Modal */}
+      <GoogleDriveModal
+        isOpen={isDriveModalOpen}
+        onClose={() => setIsDriveModalOpen(false)}
+      />
     </header>
   );
 };
