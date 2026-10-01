@@ -16,7 +16,8 @@ import {
   Wifi,
   CloudOff,
   RefreshCw,
-  X
+  X,
+  Sparkles
 } from 'lucide-react';
 
 // Pages
@@ -304,7 +305,7 @@ export default function App() {
         </main>
 
         {/* Mobile Quick Bottom Navigation Bar (Visible on mobile/tablet screens < lg) */}
-        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 flex items-center justify-around py-1.5 px-2 text-slate-400 select-none shadow-2xl">
+        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 flex items-center justify-around py-1.5 px-2 text-slate-400 select-none shadow-2xl safe-area-pb">
           <button
             onClick={() => setActiveTab('dashboard')}
             className={`flex flex-col items-center justify-center flex-1 py-1 px-1 rounded-lg transition-colors cursor-pointer ${
@@ -313,16 +314,6 @@ export default function App() {
           >
             <LayoutDashboard className="w-4 h-4" />
             <span className="text-[10px] mt-0.5 tracking-tight truncate">Beranda</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('keanggotaan')}
-            className={`flex flex-col items-center justify-center flex-1 py-1 px-1 rounded-lg transition-colors cursor-pointer ${
-              activeTab === 'keanggotaan' ? 'text-emerald-400 font-bold' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Users className="w-4 h-4" />
-            <span className="text-[10px] mt-0.5 tracking-tight truncate">Anggota</span>
           </button>
 
           <button
@@ -336,19 +327,26 @@ export default function App() {
           </button>
 
           <button
-            onClick={() => setActiveTab('simpanan')}
-            className={`flex flex-col items-center justify-center flex-1 py-1 px-1 rounded-lg transition-colors cursor-pointer ${
-              activeTab === 'simpanan' ? 'text-emerald-400 font-bold' : 'text-slate-400 hover:text-slate-200'
+            onClick={() => setActiveTab('laporan_ai')}
+            className={`flex flex-col items-center justify-center flex-1 py-1 px-1 rounded-lg transition-colors cursor-pointer relative ${
+              activeTab === 'laporan_ai' || activeTab === 'upload_laporan'
+                ? 'text-emerald-300 font-bold'
+                : 'text-slate-300 hover:text-white'
             }`}
           >
-            <Banknote className="w-4 h-4" />
-            <span className="text-[10px] mt-0.5 tracking-tight truncate">Simpanan</span>
+            <div className="relative">
+              <Sparkles className="w-4 h-4 text-emerald-400" />
+              <span className="absolute -top-1 -right-2 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+            </div>
+            <span className="text-[10px] mt-0.5 tracking-tight truncate font-semibold">Laporan AI</span>
           </button>
 
           <button
             onClick={() => setActiveTab('peminjaman')}
             className={`relative flex flex-col items-center justify-center flex-1 py-1 px-1 rounded-lg transition-colors cursor-pointer ${
-              activeTab === 'peminjaman' ? 'text-emerald-400 font-bold' : 'text-slate-400 hover:text-slate-200'
+              activeTab === 'peminjaman' || activeTab === 'simpanan'
+                ? 'text-emerald-400 font-bold'
+                : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             <HandCoins className="w-4 h-4" />
@@ -363,13 +361,13 @@ export default function App() {
           <button
             onClick={() => setIsMobileSidebarOpen(true)}
             className={`flex flex-col items-center justify-center flex-1 py-1 px-1 rounded-lg transition-colors cursor-pointer ${
-              activeTab === 'pertokoan' || activeTab === 'pengaturan'
+              isMobileSidebarOpen || activeTab === 'keanggotaan' || activeTab === 'pertokoan' || activeTab === 'pengaturan'
                 ? 'text-emerald-400 font-bold'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             <Menu className="w-4 h-4" />
-            <span className="text-[10px] mt-0.5 tracking-tight truncate">Lainnya</span>
+            <span className="text-[10px] mt-0.5 tracking-tight truncate">Menu</span>
           </button>
         </nav>
       </div>

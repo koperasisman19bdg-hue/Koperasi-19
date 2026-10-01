@@ -2,9 +2,20 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
     <title>Koperasi Warga Bahagia</title>
     <meta name="description" content="Sistem Informasi Manajemen Koperasi Warga Bahagia: Data Keanggotaan, E-KTA, Jurnal Umum, Simpanan, Peminjaman Uang & Barang, serta Pembukuan Pertokoan & Seragam." />
+    
+    <!-- PWA & Mobile Web App Meta -->
+    <meta name="theme-color" content="#064e3b" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Koperasi WB" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/png" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
     <meta property="og:title" content="Koperasi Warga Bahagia" />
     <meta property="og:description" content="Sistem Informasi Manajemen Koperasi Warga Bahagia: Data Keanggotaan, E-KTA, Jurnal Umum, Simpanan, Peminjaman Uang & Barang, serta Pembukuan Pertokoan & Seragam." />
     <meta property="og:type" content="website" />
@@ -12,6 +23,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(err => {
+            console.debug('ServiceWorker registration ignored:', err);
+          });
+        });
+      }
+    </script>
   </head>
   <body class="bg-slate-50 text-slate-900 antialiased font-sans selection:bg-emerald-100 selection:text-emerald-900">
     <div id="root"></div>

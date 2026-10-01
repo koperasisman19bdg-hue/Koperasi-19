@@ -18,10 +18,13 @@ import {
   Cloud,
   Users,
   Sparkles,
-  Radio
+  Radio,
+  Smartphone,
+  Laptop
 } from 'lucide-react';
 import { PengajuanPinjaman } from '../types';
 import { StorageService } from '../utils/storage';
+import { DeviceIntegrationModal } from './DeviceIntegrationModal';
 
 interface HeaderProps {
   currentTabName: string;
@@ -56,6 +59,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [syncStatus, setSyncStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [networkInfo, setNetworkInfo] = useState(() => StorageService.getNetworkStatus());
   const [onlineUsers, setOnlineUsers] = useState<number>(() => StorageService.getOnlineUsersCount());
+  const [isDeviceModalOpen, setIsDeviceModalOpen] = useState(false);
   
   // Realtime floating notification when other operators input/edit data
   const [remoteUpdateToast, setRemoteUpdateToast] = useState<{
@@ -278,6 +282,18 @@ export const Header: React.FC<HeaderProps> = ({
           </span>
         </button>
 
+        {/* Multi-Device & PWA Install Button */}
+        <button
+          type="button"
+          onClick={() => setIsDeviceModalOpen(true)}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-xl border border-emerald-300 bg-emerald-50/80 hover:bg-emerald-100 text-emerald-900 transition-all cursor-pointer shadow-2xs"
+          title="Akses Fleksibel di Laptop & HP (PWA Terintegrasi)"
+        >
+          <Smartphone className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+          <span className="hidden sm:inline font-bold">Laptop & HP</span>
+          <span className="text-[10px] text-emerald-700 font-mono hidden md:inline">✓</span>
+        </button>
+
         {/* Notifications Icon & Dropdown */}
         <div className="relative">
           <button
@@ -469,6 +485,12 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         )}
       </div>
+
+      {/* Modal Akses Laptop & HP Terintegrasi */}
+      <DeviceIntegrationModal
+        isOpen={isDeviceModalOpen}
+        onClose={() => setIsDeviceModalOpen(false)}
+      />
     </header>
   );
 };

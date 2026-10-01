@@ -39,8 +39,11 @@ import {
   Download,
   Calendar,
   Sparkles,
-  X
+  X,
+  Smartphone,
+  Laptop
 } from 'lucide-react';
+import { DeviceIntegrationModal } from '../components/DeviceIntegrationModal';
 import {
   ResponsiveContainer,
   BarChart,
@@ -95,6 +98,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [selectedBulan, setSelectedBulan] = useState(new Date().getMonth() + 1); // 1-12
   const [selectedTahun, setSelectedTahun] = useState(new Date().getFullYear() || 2026);
+  const [isDeviceModalOpen, setIsDeviceModalOpen] = useState(false);
 
   // Real-time synchronization on data change events
   useEffect(() => {
@@ -330,6 +334,37 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Multi-Device Integration Card (Laptop & HP) */}
+      <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-slate-50 border border-emerald-200/80 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xs">
+        <div className="flex items-start sm:items-center gap-3.5">
+          <div className="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-md">
+            <Smartphone className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-bold text-slate-900">
+                Aplikasi Terintegrasi Multi-Perangkat (Laptop & HP)
+              </h3>
+              <span className="text-[10px] font-bold bg-emerald-600 text-white px-2 py-0.5 rounded-full">
+                Final & PWA
+              </span>
+            </div>
+            <p className="text-xs text-slate-600 mt-0.5">
+              Dapat diakses lancar dari layar laptop maupun HP secara realtime, lengkap dengan dukungan pasang aplikasi mandiri (PWA).
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setIsDeviceModalOpen(true)}
+          className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-2 shrink-0 self-stretch sm:self-auto justify-center"
+        >
+          <Laptop className="w-4 h-4" />
+          <span>Panduan & Pasang App</span>
+        </button>
       </div>
 
       {/* Top Level Metric Cards */}
@@ -1267,6 +1302,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
         </div>
       )}
+
+      {/* Modal Akses Laptop & HP */}
+      <DeviceIntegrationModal
+        isOpen={isDeviceModalOpen}
+        onClose={() => setIsDeviceModalOpen(false)}
+      />
     </div>
   );
 };

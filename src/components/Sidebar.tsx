@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Users,
   BookOpen,
@@ -11,9 +11,11 @@ import {
   ShieldCheck,
   Settings,
   UploadCloud,
-  X
+  X,
+  Smartphone
 } from 'lucide-react';
 import defaultLogoImg from '../assets/images/lambang_koperasi.jpg';
+import { DeviceIntegrationModal } from './DeviceIntegrationModal';
 
 interface SidebarProps {
   activeTab: string;
@@ -40,6 +42,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isMobileOpen = false,
   onCloseMobile
 }) => {
+  const [isDeviceModalOpen, setIsDeviceModalOpen] = useState(false);
   const currentLogo = customLogoUrl || defaultLogoImg;
 
   const menuItems = [
@@ -178,6 +181,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </button>
           );
         })}
+        {/* Device PWA Button in Sidebar */}
+        <div className="pt-2 px-1">
+          <button
+            type="button"
+            onClick={() => {
+              setIsDeviceModalOpen(true);
+              if (onCloseMobile) onCloseMobile();
+            }}
+            className="w-full flex items-center justify-between p-2.5 rounded-xl bg-gradient-to-r from-emerald-950/70 to-slate-900 border border-emerald-500/40 text-emerald-300 hover:text-white hover:border-emerald-400 transition-all cursor-pointer group shadow-2xs"
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              <Smartphone className="w-4 h-4 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
+              <div className="text-left min-w-0">
+                <div className="text-xs font-bold leading-tight truncate">Akses Laptop & HP</div>
+                <div className="text-[10px] text-slate-400 leading-tight">Pasang Aplikasi (PWA)</div>
+              </div>
+            </div>
+            <span className="text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.5 rounded font-mono uppercase font-bold">
+              Instal
+            </span>
+          </button>
+        </div>
       </nav>
 
       {/* Admin User Info & Logout Footer */}
@@ -234,6 +259,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
       )}
+
+      {/* Modal Akses Laptop & HP */}
+      <DeviceIntegrationModal
+        isOpen={isDeviceModalOpen}
+        onClose={() => setIsDeviceModalOpen(false)}
+      />
     </>
   );
 };

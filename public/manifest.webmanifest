@@ -1,0 +1,57 @@
+{
+  "id": "/",
+  "name": "Koperasi Warga Bahagia",
+  "short_name": "Koperasi WB",
+  "description": "Sistem Informasi Manajemen Koperasi Warga Bahagia - Terintegrasi Multi-Perangkat (Laptop & HP)",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#065f46",
+  "background_color": "#0f172a",
+  "lang": "id",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["business", "finance", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Laporan Keuangan",
+      "short_name": "Laporan",
+      "description": "Buka Laporan Keuangan AI SAK EP",
+      "url": "/?tab=laporan_ai",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Buku Kas Jurnal",
+      "short_name": "Jurnal",
+      "description": "Buku Kas & Transaksi Jurnal Umum",
+      "url": "/?tab=jurnal",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Data Anggota",
+      "short_name": "Anggota",
+      "description": "Kelola Data & E-KTA Anggota",
+      "url": "/?tab=keanggotaan",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
